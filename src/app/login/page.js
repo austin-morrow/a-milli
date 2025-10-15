@@ -1,6 +1,27 @@
+'use client'
+
+import { signIn } from '@/app/actions/auth';
+import { useState } from 'react';
 import Link from "next/link";
 
 export default function LogIn() {
+const [error, setError] = useState(null)
+const [loading, setLoading] = useState(false)
+
+async function handleSubmit(e) {
+  e.preventDefault()
+  setLoading(true)
+  setError(null)
+
+  const formData = new FormData(e.currentTarget)
+  const result = await signIn(formData)
+
+  if (result?.error) {
+    setError(result.error)
+    setLoading(false)
+  }
+}
+
     return (
       <>
         <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -17,7 +38,7 @@ export default function LogIn() {
   
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
             <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-              <form action="#" method="POST" className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                     Email address
@@ -93,21 +114,22 @@ export default function LogIn() {
                     </a>
                   </div>
                 </div>
+
+               {error && (
+                <div className='rounded-md bg-red-50 p-4'>
+                  <p className='text-sm text-red-800'>{error}</p>
+                </div>
+               )}
   
                 <div>
                   <button
                     type="submit"
                     className="flex w-full justify-center rounded-md bg-[#00bf63] px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-[#33d98a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00bf63]"
                   >
-                    Sign in
+                    {loading ? 'Signing in...' : 'Sign in'}
                   </button>
                 </div>
               </form>
-  
-         
-  
-            
-           
             </div>
   
             <p className="mt-10 text-center text-sm/6 text-gray-500">

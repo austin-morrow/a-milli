@@ -11,6 +11,8 @@
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.75.0",
     "heroicons": "^2.2.0",
     "next": "15.2.0",
     "react": "^19.0.0",

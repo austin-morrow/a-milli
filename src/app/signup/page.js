@@ -1,6 +1,38 @@
+'use client'
+
+import { signUp } from '@/app/actions/auth';
+import { useState } from 'react';
 import Link from "next/link";
 
 export default function SignUp() {
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+  
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    const formData = new FormData(e.currentTarget)
+
+  // Check if passwords match
+  const password = formData.get('password')
+  const confirmPassword = formData.get('confirmPassword')
+
+  if (password !== confirmPassword) {
+    setError('Passwords do not match')
+    setLoading(false)
+    return
+  }
+
+  const result = await signUp(formData)
+
+  if (result?.error) {
+    setError(result.error)
+    setLoading(false)
+  }
+  }
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -17,7 +49,7 @@ export default function SignUp() {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            <form action="#" method="POST" className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="flex gap-4">
                 <div className="w-1/2">
                   <label
@@ -90,7 +122,8 @@ export default function SignUp() {
                     name="password"
                     type="password"
                     required
-                    autoComplete="current-password"
+                    minLength={6}
+                    autoComplete="new-password"
                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63] sm:text-sm/6"
                   />
                 </div>
@@ -105,22 +138,31 @@ export default function SignUp() {
                 </label>
                 <div className="mt-2">
                   <input
-                    id="password"
-                    name="password"
+                    id="confirm-password"
+                    name="confirmPassword"
                     type="password"
                     required
-                    autoComplete="current-password"
+                    minLength={6}
+                    autoComplete="new-password"
                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63] sm:text-sm/6"
                   />
                 </div>
               </div>
 
+              {error && (
+                <div className="rounded-md bg-red-50 p-4">
+                  <p className="text-sm text-red-800">{error}</p>
+                </div>
+              )}
+
               <div className="pt-2">
                 <button
                   type="submit"
+                  disabled={loading}
                   className="flex w-full justify-center rounded-md bg-[#00bf63] px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-[#33d98a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00bf63]"
                 >
-                  Sign up
+                {loading ? 'Creating account...' : 'Sign up'}
+            
                 </button>
               </div>
             </form>
