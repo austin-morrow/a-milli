@@ -13,12 +13,19 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  // Fetch the user's profile
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
+   // Fetch the user's workspace
+  const { data: workspaceMember } = await supabase
+    .from('workspace_members')
+    .select('workspace_id, workspaces(name, slug)')
+    .eq('user_id', user.id)
     .single()
+
+  const workspace = workspaceMember?.workspaces
+
+  // Get user's first and last name from metadata
+  const firstName = user.user_metadata?.first_name || ''
+  const lastName = user.user_metadata?.last_name || ''
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -32,10 +39,15 @@ export default async function DashboardPage() {
                 className="h-8 w-auto"
               />
               <h1 className="ml-4 text-xl font-bold text-gray-900">Dashboard</h1>
+              {workspace && (
+                <span className="ml-4 text-sm text-gray-500">
+                  / {workspace.name}
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-700">
-                {profile?.first_name} {profile?.last_name}
+                {firstName} {lastName}
               </span>
               <span className="text-sm text-gray-500">{user.email}</span>
               <form action={signOut}>
@@ -56,7 +68,7 @@ export default async function DashboardPage() {
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Welcome back, {profile?.first_name}! 👋
+                Welcome back, {firstName}! 👋
               </h2>
               <div className="space-y-3">
                 <p className="text-gray-600">
@@ -67,15 +79,19 @@ export default async function DashboardPage() {
                   <dl className="space-y-1">
                     <div>
                       <dt className="text-xs text-gray-500">Name:</dt>
-                      <dd className="text-sm text-gray-900">{profile?.first_name} {profile?.last_name}</dd>
+                      <dd className="text-sm text-gray-900">{firstName} {lastName}</dd>
                     </div>
                     <div>
                       <dt className="text-xs text-gray-500">Email:</dt>
                       <dd className="text-sm text-gray-900">{user.email}</dd>
                     </div>
                     <div>
-                      <dt className="text-xs text-gray-500">User ID:</dt>
-                      <dd className="text-sm text-gray-900 font-mono">{user.id}</dd>
+                      <dt className="text-xs text-gray-500">Workspace:</dt>
+                      <dd className="text-sm text-gray-900">{workspace?.name || 'No workspace'}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-xs text-gray-500">Workspace URL:</dt>
+                      <dd className="text-sm text-gray-900 font-mono">/w/{workspace?.slug}</dd>
                     </div>
                   </dl>
                 </div>

@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }) {
   const pathname = usePathname();
 
-  const hideHeader = pathname === "/login" || pathname === "/signup";
+  const hideHeader = pathname === "/login" || pathname === "/signup" || pathname === "/onboarding";
 
   return (
     <html lang="en">
