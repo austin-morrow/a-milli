@@ -9,12 +9,14 @@ import {
   ChartPieIcon,
   HomeIcon,
   XMarkIcon,
-  CalculatorIcon
+  CalculatorIcon,
+  CurrencyDollarIcon
 } from '@heroicons/react/24/outline'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
   { name: 'Budget', href: '/budget', icon: CalculatorIcon, current: false },
+  { name: 'Bills', href: '/bills', icon: CurrencyDollarIcon, current: false },
   { name: 'Report', href: '/report', icon: ChartPieIcon, current: false },
 ]
 
