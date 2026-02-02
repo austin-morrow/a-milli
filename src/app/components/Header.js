@@ -64,7 +64,7 @@ export default function Example() {
                     
                     <img
                     alt="Your Company"
-                    src="/millisecondary.svg"
+                    src="/milli.svg"
                     className="h-8 w-auto"
                       />
 
@@ -111,7 +111,7 @@ export default function Example() {
             <div className="flex h-16 shrink-0 items-center">
                  <img
                     alt="Your Company"
-                    src="/millisecondary.svg"
+                    src="/milli.svg"
                     className="h-8 w-auto"
                       />
             </div>

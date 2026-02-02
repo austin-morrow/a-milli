@@ -1,13 +1,13 @@
 "use client";
 
-import { createBill } from "@/app/actions/bills";
+import { updateBill } from "@/app/actions/bills";
 import { useState } from "react";
 
-export default function AddBillModal({ isOpen, onClose }) {
+export default function EditBillModal({ isOpen, onClose, bill }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-const [recurrenceType, setRecurrenceType] = useState("monthly");
-const [selectedDays, setSelectedDays] = useState([]);
+  const [recurrenceType, setRecurrenceType] = useState("one-time");
+  const [selectedDays, setSelectedDays] = useState([]);
 
   const daysOfWeek = [
     { value: 0, label: "Sun" },
@@ -38,8 +38,7 @@ const [selectedDays, setSelectedDays] = useState([]);
       formData.set("weeklyDays", JSON.stringify(selectedDays));
     }
 
-    const result = await createBill(formData);
-
+    const result = await updateBill(bill.id, formData);
     if (result?.error) {
       setError(result.error);
       setLoading(false);
@@ -52,7 +51,7 @@ const [selectedDays, setSelectedDays] = useState([]);
     }
   }
 
-  if (!isOpen) return null;
+  if (!isOpen || !bill) return null;
 
   return (
     <div
@@ -62,7 +61,7 @@ const [selectedDays, setSelectedDays] = useState([]);
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="px-6 py-4 border-b border-gray-200 sticky top-0 bg-white">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">Add New Bill</h2>
+            <h2 className="text-xl font-bold text-gray-900">Edit Bill</h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600"
@@ -98,6 +97,7 @@ const [selectedDays, setSelectedDays] = useState([]);
                 id="description"
                 name="description"
                 required
+                defaultValue={bill.description}
                 placeholder="e.g., Electric Bill"
                 className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
               />
@@ -121,30 +121,24 @@ const [selectedDays, setSelectedDays] = useState([]);
                   step="0.01"
                   min="0"
                   required
+                  defaultValue={bill.amount}
                   placeholder="0.00"
                   className="block w-full rounded-md bg-white pl-7 pr-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
                 />
               </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="recurrenceType"
-                className="block text-sm font-medium text-gray-900"
-              >
-                Frequency
-              </label>
-              <select
-                id="recurrenceType"
-                value={recurrenceType}
-                onChange={(e) => setRecurrenceType(e.target.value)}
-                className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
-              >
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-                <option value="yearly">Yearly</option>
-              </select>
-            </div>
+            <select
+              id="recurrenceType"
+              name="recurrenceType"
+              defaultValue={bill.recurrence_type}
+              onChange={(e) => setRecurrenceType(e.target.value)}
+              className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
+            >
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
 
             {/* Weekly Options */}
             {recurrenceType === "weekly" && (
@@ -221,8 +215,8 @@ const [selectedDays, setSelectedDays] = useState([]);
                 </div>
               </div>
             )}
+    
 
-           
             {error && (
               <div className="rounded-md bg-red-50 p-3">
                 <p className="text-sm text-red-800">{error}</p>
@@ -243,7 +237,7 @@ const [selectedDays, setSelectedDays] = useState([]);
               disabled={loading}
               className="flex-1 rounded-md bg-[#00bf63] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#33d98a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00bf63] disabled:opacity-50"
             >
-              {loading ? "Adding..." : "Add Bill"}
+              {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>

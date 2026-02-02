@@ -3,51 +3,71 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function createBill(formData) {
+
+export async function updateBill(billId, formData) {
   const supabase = await createClient()
 
   // Get the current user
   const { data: { user }, error: userError } = await supabase.auth.getUser()
 
   if (userError || !user) {
-    return { error: 'You must be logged in to create a bill' }
-  }
-
-  // Get the user's workspace
-  const { data: workspaceMember, error: workspaceError } = await supabase
-    .from('workspace_members')
-    .select('workspace_id')
-    .eq('user_id', user.id)
-    .single()
-
-  if (workspaceError || !workspaceMember) {
-    return { error: 'No workspace found' }
+    return { error: 'You must be logged in to update a bill' }
   }
 
   // Get form data
   const amount = formData.get('amount')
-  const dueDate = formData.get('dueDate')
+  const dayOfMonth = formData.get('dayOfMonth')
   const description = formData.get('description')
+  const isRecurring = formData.get('isRecurring') === 'on'
+  const recurrenceEndDate = formData.get('recurrenceEndDate')
 
   // Validate
-  if (!amount || !dueDate || !description) {
-    return { error: 'All fields are required' }
+  if (!amount || !dayOfMonth || !description) {
+    return { error: 'Description, amount, and day of month are required' }
   }
 
-  // Create the bill
+  // Build the update object
+  const updateData = {
+    amount: parseFloat(amount),
+    day_of_month: parseInt(dayOfMonth),
+    description: description,
+    recurrence_end_date: recurrenceEndDate || null,
+  }
+
+  // Update the bill
   const { error: billError } = await supabase
     .from('bills')
-    .insert({
-      workspace_id: workspaceMember.workspace_id,
-      amount: parseFloat(amount),
-      due_date: dueDate,
-      description: description,
-    })
+    .update(updateData)
+    .eq('id', billId)
 
   if (billError) {
-    return { error: 'Failed to create bill: ' + billError.message }
+    return { error: 'Failed to update bill: ' + billError.message }
   }
 
-  revalidatePath('/dashboard/bills')
+  revalidatePath('/bills')
+  return { success: true }
+}
+
+export async function deleteBill(billId) {
+  const supabase = await createClient()
+
+  // Get the current user
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+  if (userError || !user) {
+    return { error: 'You must be logged in to delete a bill' }
+  }
+
+  // Delete the bill
+  const { error: billError } = await supabase
+    .from('bills')
+    .delete()
+    .eq('id', billId)
+
+  if (billError) {
+    return { error: 'Failed to delete bill: ' + billError.message }
+  }
+
+  revalidatePath('/bills')
   return { success: true }
 }

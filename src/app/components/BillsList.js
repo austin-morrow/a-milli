@@ -2,9 +2,14 @@
 
 import { useState } from 'react'
 import AddBillModal from '@/app/components/AddBillModal'
+import EditBillModal from '@/app/components/EditBillModal'
+import DeleteBillModal from '@/app/components/DeleteBillModal'
 
 export default function BillsList({ bills }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [selectedBill, setSelectedBill] = useState(null)
 
   // Format currency
   const formatCurrency = (amount) => {
@@ -14,13 +19,24 @@ export default function BillsList({ bills }) {
     }).format(amount)
   }
 
-  // Format date
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
+  // Format day with ordinal suffix
+  const formatDay = (day) => {
+    const getOrdinal = (n) => {
+      const s = ['th', 'st', 'nd', 'rd']
+      const v = n % 100
+      return n + (s[(v - 20) % 10] || s[v] || s[0])
+    }
+    return getOrdinal(day)
+  }
+
+  const handleEditClick = (bill) => {
+    setSelectedBill(bill)
+    setIsEditModalOpen(true)
+  }
+
+  const handleDeleteClick = (bill) => {
+    setSelectedBill(bill)
+    setIsDeleteModalOpen(true)
   }
 
   return (
@@ -79,7 +95,10 @@ export default function BillsList({ bills }) {
                   Amount
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Due Date
+                  Due Day
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Recurring
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
@@ -96,16 +115,31 @@ export default function BillsList({ bills }) {
                     <div className="text-sm text-gray-900">{formatCurrency(bill.amount)}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{formatDate(bill.due_date)}</div>
+                    <div className="text-sm text-gray-900">{formatDay(bill.day_of_month)}</div>
                   </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+  <span className={`inline-flex rounded-full px-2 text-xs font-semibold ${
+    bill.is_recurring 
+      ? 'bg-green-100 text-green-800' 
+      : 'bg-gray-100 text-gray-800'
+  }`}>
+    {bill.recurrence_type.charAt(0).toUpperCase() + bill.recurrence_type.slice(1)}
+  </span>
+</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-[#00bf63] hover:text-[#33d98a] mr-4">
-                      Edit
-                    </button>
-                    <button className="text-red-600 hover:text-red-900">
-                      Delete
-                    </button>
-                  </td>
+        <button 
+          onClick={() => handleEditClick(bill)}
+          className="text-[#00bf63] hover:text-[#33d98a] mr-4"
+        >
+          Edit
+        </button>
+        <button 
+          onClick={() => handleDeleteClick(bill)}
+          className="text-red-600 hover:text-red-900"
+        >
+          Delete
+        </button>
+      </td>
                 </tr>
               ))}
             </tbody>
@@ -113,9 +147,27 @@ export default function BillsList({ bills }) {
         </div>
       )}
 
-      <AddBillModal 
+  <AddBillModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
+      />
+      
+      <EditBillModal 
+        isOpen={isEditModalOpen} 
+        onClose={() => {
+          setIsEditModalOpen(false)
+          setSelectedBill(null)
+        }}
+        bill={selectedBill}
+      />
+
+      <DeleteBillModal 
+        isOpen={isDeleteModalOpen} 
+        onClose={() => {
+          setIsDeleteModalOpen(false)
+          setSelectedBill(null)
+        }}
+        bill={selectedBill}
       />
     </>
   )
