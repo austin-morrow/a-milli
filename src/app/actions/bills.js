@@ -3,6 +3,81 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
+export async function createBill(formData) {
+  const supabase = await createClient()
+
+  // Get the current user
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+  if (userError || !user) {
+    return { error: 'You must be logged in to create a bill' }
+  }
+
+  // Get the user's workspace
+  const { data: workspaceMember, error: workspaceError } = await supabase
+    .from('workspace_members')
+    .select('workspace_id')
+    .eq('user_id', user.id)
+    .single()
+
+  if (workspaceError || !workspaceMember) {
+    return { error: 'No workspace found' }
+  }
+
+  // Get form data
+  const amount = formData.get('amount')
+  const description = formData.get('description')
+  const recurrenceType = formData.get('recurrenceType')
+
+  // Validate basic fields
+  if (!amount || !description || !recurrenceType) {
+    return { error: 'Description, amount, and frequency are required' }
+  }
+
+  // Build the bill object
+  const billData = {
+    workspace_id: workspaceMember.workspace_id,
+    amount: parseFloat(amount),
+    description: description,
+    recurrence_type: recurrenceType,
+    is_recurring: true, // All bills are recurring now
+  }
+
+  // Handle different recurrence types
+  if (recurrenceType === 'weekly') {
+    const weeklyDays = formData.get('weeklyDays')
+    if (!weeklyDays) {
+      return { error: 'Please select at least one day for weekly bills' }
+    }
+    billData.weekly_days = JSON.parse(weeklyDays)
+  } 
+  else if (recurrenceType === 'monthly') {
+    const dayOfMonth = formData.get('dayOfMonth')
+    if (!dayOfMonth) {
+      return { error: 'Day of month is required for monthly bills' }
+    }
+    billData.day_of_month = dayOfMonth === 'last' ? -1 : parseInt(dayOfMonth)
+  } 
+  else if (recurrenceType === 'yearly') {
+    const yearlyDate = formData.get('yearlyDate')
+    if (!yearlyDate) {
+      return { error: 'Date is required for yearly bills' }
+    }
+    billData.yearly_date = yearlyDate
+  }
+
+  // Create the bill
+  const { error: billError } = await supabase
+    .from('bills')
+    .insert(billData)
+
+  if (billError) {
+    return { error: 'Failed to create bill: ' + billError.message }
+  }
+
+  revalidatePath('/bills')
+  return { success: true }
+}
 
 export async function updateBill(billId, formData) {
   const supabase = await createClient()
@@ -16,22 +91,47 @@ export async function updateBill(billId, formData) {
 
   // Get form data
   const amount = formData.get('amount')
-  const dayOfMonth = formData.get('dayOfMonth')
   const description = formData.get('description')
-  const isRecurring = formData.get('isRecurring') === 'on'
-  const recurrenceEndDate = formData.get('recurrenceEndDate')
+  const recurrenceType = formData.get('recurrenceType')
 
-  // Validate
-  if (!amount || !dayOfMonth || !description) {
-    return { error: 'Description, amount, and day of month are required' }
+  // Validate basic fields
+  if (!amount || !description || !recurrenceType) {
+    return { error: 'Description, amount, and frequency are required' }
   }
 
   // Build the update object
   const updateData = {
     amount: parseFloat(amount),
-    day_of_month: parseInt(dayOfMonth),
     description: description,
-    recurrence_end_date: recurrenceEndDate || null,
+    recurrence_type: recurrenceType,
+    is_recurring: true,
+    // Clear old values
+    day_of_month: null,
+    weekly_days: null,
+    yearly_date: null,
+  }
+
+  // Handle different recurrence types
+  if (recurrenceType === 'weekly') {
+    const weeklyDays = formData.get('weeklyDays')
+    if (!weeklyDays) {
+      return { error: 'Please select at least one day for weekly bills' }
+    }
+    updateData.weekly_days = JSON.parse(weeklyDays)
+  } 
+  else if (recurrenceType === 'monthly') {
+    const dayOfMonth = formData.get('dayOfMonth')
+    if (!dayOfMonth) {
+      return { error: 'Day of month is required for monthly bills' }
+    }
+    updateData.day_of_month = dayOfMonth === 'last' ? -1 : parseInt(dayOfMonth)
+  } 
+  else if (recurrenceType === 'yearly') {
+    const yearlyDate = formData.get('yearlyDate')
+    if (!yearlyDate) {
+      return { error: 'Date is required for yearly bills' }
+    }
+    updateData.yearly_date = yearlyDate
   }
 
   // Update the bill

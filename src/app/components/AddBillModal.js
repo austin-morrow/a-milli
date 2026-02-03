@@ -6,23 +6,38 @@ import { useState } from "react";
 export default function AddBillModal({ isOpen, onClose }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-const [recurrenceType, setRecurrenceType] = useState("monthly");
-const [selectedDays, setSelectedDays] = useState([]);
+  const [recurrenceType, setRecurrenceType] = useState("monthly");
+  const [selectedDays, setSelectedDays] = useState([]);
 
   const daysOfWeek = [
-    { value: 0, label: "Sun" },
-    { value: 1, label: "Mon" },
-    { value: 2, label: "Tue" },
-    { value: 3, label: "Wed" },
-    { value: 4, label: "Thu" },
-    { value: 5, label: "Fri" },
-    { value: 6, label: "Sat" },
+    { value: 0, label: "Sunday" },
+    { value: 1, label: "Monday" },
+    { value: 2, label: "Tuesday" },
+    { value: 3, label: "Wednesday" },
+    { value: 4, label: "Thursday" },
+    { value: 5, label: "Friday" },
+    { value: 6, label: "Saturday" },
   ];
 
   const toggleDay = (day) => {
     setSelectedDays((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
     );
+  };
+
+  const getOrdinal = (n) => {
+    if (n >= 11 && n <= 13) return `${n}th`;
+
+    switch (n % 10) {
+      case 1:
+        return `${n}st`;
+      case 2:
+        return `${n}nd`;
+      case 3:
+        return `${n}rd`;
+      default:
+        return `${n}th`;
+    }
   };
 
   async function handleSubmit(e) {
@@ -132,7 +147,7 @@ const [selectedDays, setSelectedDays] = useState([]);
                 htmlFor="recurrenceType"
                 className="block text-sm font-medium text-gray-900"
               >
-                Frequency
+                Each
               </label>
               <select
                 id="recurrenceType"
@@ -140,9 +155,9 @@ const [selectedDays, setSelectedDays] = useState([]);
                 onChange={(e) => setRecurrenceType(e.target.value)}
                 className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
               >
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-                <option value="yearly">Yearly</option>
+                <option value="weekly">Week</option>
+                <option value="monthly">Month</option>
+                <option value="yearly">Year</option>
               </select>
             </div>
 
@@ -151,7 +166,7 @@ const [selectedDays, setSelectedDays] = useState([]);
               <div className="pl-6 space-y-4 border-l-2 border-gray-200">
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">
-                    Days of the week
+                    On
                   </label>
                   <div className="flex gap-2 flex-wrap">
                     {daysOfWeek.map((day) => (
@@ -181,7 +196,7 @@ const [selectedDays, setSelectedDays] = useState([]);
                     htmlFor="dayOfMonth"
                     className="block text-sm font-medium text-gray-900"
                   >
-                    Day of Month
+                    On the
                   </label>
                   <select
                     id="dayOfMonth"
@@ -190,11 +205,13 @@ const [selectedDays, setSelectedDays] = useState([]);
                     className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
                   >
                     <option value="">Select day...</option>
+
                     {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
                       <option key={day} value={day}>
-                        {day}
+                        {getOrdinal(day)}
                       </option>
                     ))}
+
                     <option value="last">Last day of month</option>
                   </select>
                 </div>
@@ -209,7 +226,7 @@ const [selectedDays, setSelectedDays] = useState([]);
                     htmlFor="yearlyDate"
                     className="block text-sm font-medium text-gray-900"
                   >
-                    Date (Month & Day)
+                    On
                   </label>
                   <input
                     type="date"
@@ -222,7 +239,6 @@ const [selectedDays, setSelectedDays] = useState([]);
               </div>
             )}
 
-           
             {error && (
               <div className="rounded-md bg-red-50 p-3">
                 <p className="text-sm text-red-800">{error}</p>
