@@ -32,7 +32,15 @@ export default function BillsList({ bills }) {
   // Format due date based on recurrence type
   const formatDueDate = (bill) => {
     if (bill.recurrence_type === "weekly") {
-      const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const dayNames = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
       return bill.weekly_days?.map((day) => dayNames[day]).join(", ") || "N/A";
     } else if (bill.recurrence_type === "monthly") {
       if (bill.day_of_month === -1) {
@@ -60,7 +68,8 @@ export default function BillsList({ bills }) {
           <div className="sm:flex-auto">
             <h1 className="text-base font-semibold text-gray-900">Bills</h1>
             <p className="mt-2 text-sm text-gray-700">
-              A list of all your recurring bills including amount, due date, and frequency.
+              A list of all your recurring bills including amount, due date, and
+              frequency.
             </p>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -125,17 +134,35 @@ export default function BillsList({ bills }) {
                   <table className="relative min-w-full divide-y divide-gray-300">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                        <th
+                          scope="col"
+                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                        >
                           Description
                         </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        <th
+                          scope="col"
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
                           Amount
                         </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        <th
+                          scope="col"
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
                           Due Date
                         </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        <th
+                          scope="col"
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
                           Frequency
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
+                          Category
                         </th>
                         <th scope="col" className="py-3.5 pl-3 pr-4 sm:pr-6">
                           <span className="sr-only">Actions</span>
@@ -156,21 +183,45 @@ export default function BillsList({ bills }) {
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold text-green-800">
-                              {bill.recurrence_type.charAt(0).toUpperCase() + bill.recurrence_type.slice(1)}
+                              {bill.recurrence_type.charAt(0).toUpperCase() +
+                                bill.recurrence_type.slice(1)}
                             </span>
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {bill.categories ? (
+                              <span
+                                className="inline-flex rounded-full px-2 text-xs font-semibold"
+                                style={{
+                                  backgroundColor: `${bill.categories.color}20`,
+                                  color: bill.categories.color,
+                                }}
+                              >
+                                {bill.categories.name}
+                              </span>
+                            ) : (
+                              <span className="text-gray-400 text-xs">
+                                Uncategorized
+                              </span>
+                            )}
                           </td>
                           <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                             <button
                               onClick={() => handleEditClick(bill)}
                               className="text-[#00bf63] hover:text-[#33d98a] mr-4"
                             >
-                              Edit<span className="sr-only">, {bill.description}</span>
+                              Edit
+                              <span className="sr-only">
+                                , {bill.description}
+                              </span>
                             </button>
                             <button
                               onClick={() => handleDeleteClick(bill)}
                               className="text-red-600 hover:text-red-900"
                             >
-                              Delete<span className="sr-only">, {bill.description}</span>
+                              Delete
+                              <span className="sr-only">
+                                , {bill.description}
+                              </span>
                             </button>
                           </td>
                         </tr>

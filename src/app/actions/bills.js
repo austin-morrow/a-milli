@@ -41,6 +41,7 @@ export async function createBill(formData) {
     description: description,
     recurrence_type: recurrenceType,
     is_recurring: true, // All bills are recurring now
+    category_id: formData.get('categoryId') || null,
   }
 
   // Handle different recurrence types
@@ -105,6 +106,7 @@ export async function updateBill(billId, formData) {
     description: description,
     recurrence_type: recurrenceType,
     is_recurring: true,
+    category_id: formData.get('categoryId') || null,
     // Clear old values
     day_of_month: null,
     weekly_days: null,

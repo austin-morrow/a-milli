@@ -2,21 +2,23 @@
 
 import { updateBill } from '@/app/actions/bills'
 import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 export default function EditBillModal({ isOpen, onClose, bill }) {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [recurrenceType, setRecurrenceType] = useState('monthly')
   const [selectedDays, setSelectedDays] = useState([])
+  const [categories, setCategories] = useState([])
 
   const daysOfWeek = [
-    { value: 0, label: 'Sunday' },
-    { value: 1, label: 'Monday' },
-    { value: 2, label: 'Tuesday' },
-    { value: 3, label: 'Wednesday' },
-    { value: 4, label: 'Thursday' },
-    { value: 5, label: 'Friday' },
-    { value: 6, label: 'Saturday' },
+    { value: 0, label: 'Sun' },
+    { value: 1, label: 'Mon' },
+    { value: 2, label: 'Tue' },
+    { value: 3, label: 'Wed' },
+    { value: 4, label: 'Thu' },
+    { value: 5, label: 'Fri' },
+    { value: 6, label: 'Sat' },
   ]
 
   // Initialize form with bill data when modal opens
@@ -27,6 +29,25 @@ export default function EditBillModal({ isOpen, onClose, bill }) {
     }
   }, [bill])
 
+  // Fetch categories when modal opens
+  useEffect(() => {
+    async function fetchCategories() {
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name')
+      
+      if (data) {
+        setCategories(data)
+      }
+    }
+    
+    if (isOpen) {
+      fetchCategories()
+    }
+  }, [isOpen])
+
   const toggleDay = (day) => {
     setSelectedDays(prev => 
       prev.includes(day) 
@@ -34,21 +55,6 @@ export default function EditBillModal({ isOpen, onClose, bill }) {
         : [...prev, day]
     )
   }
-  const getOrdinal = (n) => {
-    if (n >= 11 && n <= 13) return `${n}th`;
-
-    switch (n % 10) {
-      case 1:
-        return `${n}st`;
-      case 2:
-        return `${n}nd`;
-      case 3:
-        return `${n}rd`;
-      default:
-        return `${n}th`;
-    }
-  };
-
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -113,7 +119,7 @@ export default function EditBillModal({ isOpen, onClose, bill }) {
 
             <div>
               <label htmlFor="amount" className="block text-sm font-medium text-gray-900">
-                I need
+                Amount
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -135,7 +141,7 @@ export default function EditBillModal({ isOpen, onClose, bill }) {
 
             <div>
               <label htmlFor="recurrenceType" className="block text-sm font-medium text-gray-900">
-                Each
+                Frequency
               </label>
               <select
                 id="recurrenceType"
@@ -143,9 +149,9 @@ export default function EditBillModal({ isOpen, onClose, bill }) {
                 onChange={(e) => setRecurrenceType(e.target.value)}
                 className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
               >
-                <option value="weekly">Week</option>
-                <option value="monthly">Month</option>
-                <option value="yearly">Year</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
               </select>
             </div>
 
@@ -154,7 +160,7 @@ export default function EditBillModal({ isOpen, onClose, bill }) {
               <div className="pl-6 space-y-4 border-l-2 border-gray-200">
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">
-                    On
+                    Days of the week
                   </label>
                   <div className="flex gap-2 flex-wrap">
                     {daysOfWeek.map(day => (
@@ -181,26 +187,21 @@ export default function EditBillModal({ isOpen, onClose, bill }) {
               <div className="pl-6 space-y-4 border-l-2 border-gray-200">
                 <div>
                   <label htmlFor="dayOfMonth" className="block text-sm font-medium text-gray-900">
-                    On the
+                    Day of Month
                   </label>
-                <select
-  id="dayOfMonth"
-  name="dayOfMonth"
-  required
-  defaultValue={bill.day_of_month === -1 ? 'last' : bill.day_of_month}
-  className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
->
-  <option value="">Select day...</option>
-
-  {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
-    <option key={day} value={day}>
-      {getOrdinal(day)}
-    </option>
-  ))}
-
-  <option value="last">Last day of month</option>
-</select>
-
+                  <select
+                    id="dayOfMonth"
+                    name="dayOfMonth"
+                    required
+                    defaultValue={bill.day_of_month === -1 ? 'last' : bill.day_of_month}
+                    className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
+                  >
+                    <option value="">Select day...</option>
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                      <option key={day} value={day}>{day}</option>
+                    ))}
+                    <option value="last">Last day of month</option>
+                  </select>
                 </div>
               </div>
             )}
@@ -210,7 +211,7 @@ export default function EditBillModal({ isOpen, onClose, bill }) {
               <div className="pl-6 space-y-4 border-l-2 border-gray-200">
                 <div>
                   <label htmlFor="yearlyDate" className="block text-sm font-medium text-gray-900">
-                    On
+                    Date (Month & Day)
                   </label>
                   <input
                     type="date"
@@ -230,6 +231,25 @@ export default function EditBillModal({ isOpen, onClose, bill }) {
               </div>
             )}
           </div>
+
+           <div>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-900">
+                Category
+              </label>
+              <select
+                id="category"
+                name="categoryId"
+                defaultValue={bill.category_id || ''}
+                className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
+              >
+                <option value="">None</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
           <div className="mt-6 flex gap-3">
             <button

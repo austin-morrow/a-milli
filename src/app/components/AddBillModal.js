@@ -2,6 +2,8 @@
 
 import { createBill } from "@/app/actions/bills";
 import { useState } from "react";
+import { useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AddBillModal({ isOpen, onClose }) {
   const [error, setError] = useState(null);
@@ -66,6 +68,27 @@ export default function AddBillModal({ isOpen, onClose }) {
       onClose();
     }
   }
+
+  const [categories, setCategories] = useState([]);
+
+  // Fetch categories when modal opens
+  useEffect(() => {
+    async function fetchCategories() {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("categories")
+        .select("*")
+        .order("name");
+
+      if (data) {
+        setCategories(data);
+      }
+    }
+
+    if (isOpen) {
+      fetchCategories();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -238,6 +261,27 @@ export default function AddBillModal({ isOpen, onClose }) {
                 </div>
               </div>
             )}
+
+            <div>
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-gray-900"
+              >
+                Category
+              </label>
+              <select
+                id="category"
+                name="categoryId"
+                className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
+              >
+                <option value="">None</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             {error && (
               <div className="rounded-md bg-red-50 p-3">

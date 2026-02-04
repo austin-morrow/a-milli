@@ -10,14 +10,16 @@ import {
   HomeIcon,
   XMarkIcon,
   CalculatorIcon,
-  CurrencyDollarIcon
+  CurrencyDollarIcon,
+  CheckCircleIcon,
+  TrophyIcon
 } from '@heroicons/react/24/outline'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
   { name: 'Budget', href: '/budget', icon: CalculatorIcon, current: false },
   { name: 'Bills', href: '/bills', icon: CurrencyDollarIcon, current: false },
-  { name: 'Report', href: '/report', icon: ChartPieIcon, current: false },
+  { name: 'Goals', href: '/goals', icon: TrophyIcon, current: false },
 ]
 
 function classNames(...classes) {
