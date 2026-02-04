@@ -18,6 +18,9 @@ import {
   TrophyIcon,
   ChevronDownIcon,
   ChevronRightIcon,
+  BuildingLibraryIcon,
+  BanknotesIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 
 const navigation = [
@@ -29,20 +32,20 @@ const navigation = [
     children: [
       { name: "Overview", href: "/budget/overview" },
       { name: "Income", href: "/budget/income" },
-
       { name: "Bills", href: "/budget/bills" },
-
       { name: "Transactions", href: "/budget/transactions" },
     ],
   },
-  { name: "Goals", href: "/goals", icon: TrophyIcon },
+    { name: "Accounts", href: "/accounts", icon: BanknotesIcon },
+    { name: "Insights", href: "/insights", icon: ChartBarIcon },
+    { name: "Goals", href: "/goals", icon: TrophyIcon },
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Header({ children }) {
+export default function Header({ children, workspaceName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [budgetOpen, setBudgetOpen] = useState(false);
   const pathname = usePathname();
@@ -270,7 +273,7 @@ export default function Header({ children }) {
                       className="size-8 rounded-full bg-gray-800 outline outline-1 -outline-offset-1 outline-white/10"
                     />
                     <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">Tom Cook</span>
+                    <span aria-hidden="true">{workspaceName}</span>
                   </a>
                 </li>
               </ul>

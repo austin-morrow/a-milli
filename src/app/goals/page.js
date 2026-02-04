@@ -32,7 +32,7 @@ export default function Goals() {
           </div>
           <figcaption className="text-base lg:col-start-1 lg:row-start-3">
             <div className="font-semibold text-gray-900">Austin Morrow</div>
-            <div className="mt-1 text-gray-500">CEO / Founder / Lead Software Developer</div>
+            <div className="mt-1 text-gray-500">CEO / Founder / Lead Software Developer / Husband</div>
           </figcaption>
         </figure>
       </div>
