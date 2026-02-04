@@ -61,6 +61,47 @@ export default function BillsList({ bills }) {
     return "N/A";
   };
 
+ // Calculate totals from bills
+const calculateTotals = () => {
+  const totalAmount = bills.reduce((sum, bill) => sum + parseFloat(bill.amount), 0)
+  
+  // Group by category and calculate totals
+  const categoryTotals = bills.reduce((acc, bill) => {
+    const categoryName = bill.categories?.name || 'Uncategorized'
+    if (!acc[categoryName]) {
+      acc[categoryName] = 0
+    }
+    acc[categoryName] += parseFloat(bill.amount)
+    return acc
+  }, {})
+
+  // Get top 2 categories by amount
+  const sortedCategories = Object.entries(categoryTotals)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 2)
+
+  return {
+    total: totalAmount,
+    topCategories: sortedCategories
+  }
+}
+
+const { total, topCategories } = calculateTotals()
+
+const totals = [
+  { 
+    name: "Total Monthly Bills", 
+    stat: formatCurrency(total)
+  },
+  { 
+    name: topCategories[0]?.[0] || "No Categories", 
+    stat: topCategories[0] ? formatCurrency(topCategories[0][1]) : "$0.00"
+  },
+  { 
+    name: topCategories[1]?.[0] || "Other", 
+    stat: topCategories[1] ? formatCurrency(topCategories[1][1]) : "$0.00"
+  },
+]
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
@@ -81,6 +122,27 @@ export default function BillsList({ bills }) {
               Add Bill
             </button>
           </div>
+        </div>
+
+        <div>
+          <h3 className="text-base font-semibold text-gray-900">
+            Last 30 days
+          </h3>
+          <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+            {totals.map((item) => (
+              <div
+                key={item.name}
+                className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6"
+              >
+                <dt className="truncate text-sm font-medium text-gray-500">
+                  {item.name}
+                </dt>
+                <dd className="mt-1 text-3xl font-semibold tracking-tight text-gray-900">
+                  {item.stat}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
         {bills.length === 0 ? (
