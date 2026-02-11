@@ -1,8 +1,36 @@
-export default function BillsPage() {
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import AccountsList from '@/app/components/AccountsList'
+
+export default async function AccountsPage() {
+  const supabase = await createClient()
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/login')
+  }
+
+  // Get user's workspace
+  const { data: workspaceMember } = await supabase
+    .from('workspace_members')
+    .select('workspace_id')
+    .eq('user_id', user.id)
+    .single()
+
+  // Fetch accounts for the workspace
+  const { data: accounts } = await supabase
+    .from('accounts')
+    .select('*')
+    .eq('workspace_id', workspaceMember.workspace_id)
+    .order('created_at', { ascending: false })
+
   return (
-    <div>
-      {/* Just your bills-specific content here */}
-      <h2>Account Content</h2>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <AccountsList accounts={accounts || []} />
+      </div>
     </div>
-  );
+  )
 }

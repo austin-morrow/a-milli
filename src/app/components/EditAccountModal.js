@@ -1,0 +1,169 @@
+'use client'
+
+import { updateAccount } from '@/app/actions/accounts'
+import { useState, useEffect } from 'react'
+
+export default function EditAccountModal({ isOpen, onClose, account }) {
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [accountType, setAccountType] = useState('banking')
+
+  useEffect(() => {
+    if (account) {
+      setAccountType(account.account_type)
+    }
+  }, [account])
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    const formData = new FormData(e.currentTarget)
+    const result = await updateAccount(account.id, formData)
+
+    if (result?.error) {
+      setError(result.error)
+      setLoading(false)
+    } else {
+      setLoading(false)
+      onClose()
+    }
+  }
+
+  if (!isOpen || !account) return null
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}>
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="px-6 py-4 border-b border-gray-200 sticky top-0 bg-white">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-gray-900">Edit Account</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="px-6 py-4">
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="accountType" className="block text-sm font-medium text-gray-900">
+                Account Type
+              </label>
+              <select
+                id="accountType"
+                name="accountType"
+                value={accountType}
+                onChange={(e) => setAccountType(e.target.value)}
+                className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
+              >
+                <option value="banking">Banking Account</option>
+                <option value="cash">Cash Account</option>
+              </select>
+            </div>
+
+            {accountType === 'banking' && (
+              <>
+                <div>
+                  <label htmlFor="accountSubtype" className="block text-sm font-medium text-gray-900">
+                    Account Subtype
+                  </label>
+                  <select
+                    id="accountSubtype"
+                    name="accountSubtype"
+                    required
+                    defaultValue={account.account_subtype}
+                    className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
+                  >
+                    <option value="">Select type...</option>
+                    <option value="checking">Checking</option>
+                    <option value="savings">Savings</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="institutionName" className="block text-sm font-medium text-gray-900">
+                    Institution Name
+                  </label>
+                  <input
+                    type="text"
+                    id="institutionName"
+                    name="institutionName"
+                    required
+                    defaultValue={account.institution_name}
+                    placeholder="e.g., Chase Bank"
+                    className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
+                  />
+                </div>
+              </>
+            )}
+
+            <div>
+              <label htmlFor="nickname" className="block text-sm font-medium text-gray-900">
+                Account Nickname
+              </label>
+              <input
+                type="text"
+                id="nickname"
+                name="nickname"
+                required
+                defaultValue={account.nickname}
+                placeholder="e.g., Main Checking"
+                className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="balance" className="block text-sm font-medium text-gray-900">
+                Current Balance
+              </label>
+              <div className="mt-1 relative rounded-md shadow-sm">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <span className="text-gray-500 sm:text-sm">$</span>
+                </div>
+                <input
+                  type="number"
+                  id="balance"
+                  name="balance"
+                  step="0.01"
+                  defaultValue={account.balance}
+                  placeholder="0.00"
+                  className="block w-full rounded-md bg-white pl-7 pr-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
+                />
+              </div>
+            </div>
+
+            {error && (
+              <div className="rounded-md bg-red-50 p-3">
+                <p className="text-sm text-red-800">{error}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-6 flex gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 rounded-md bg-[#00bf63] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#33d98a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00bf63] disabled:opacity-50"
+            >
+              {loading ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
