@@ -60,5 +60,5 @@ export async function createWorkspace(formData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect('/budget/overview')
 }

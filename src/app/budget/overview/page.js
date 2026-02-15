@@ -1,7 +1,6 @@
-export default function BillsPage() {
+export default function OverviewPage() {
   return (
     <div>
-      {/* Just your bills-specific content here */}
       <h2>Overview Content</h2>
     </div>
   );

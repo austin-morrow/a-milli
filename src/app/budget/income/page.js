@@ -1,7 +1,7 @@
-export default function BillsPage() {
+export default function IncomePage() {
   return (
     <div>
-      {/* Just your bills-specific content here */}
+      {/* Just your Expenses-specific content here */}
       <h2>Income Content</h2>
     </div>
   );

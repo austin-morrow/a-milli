@@ -11,30 +11,18 @@ import {
 } from "@headlessui/react";
 import {
   Bars3Icon,
-  HomeIcon,
   XMarkIcon,
   CalculatorIcon,
-  CurrencyDollarIcon,
   TrophyIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-  BuildingLibraryIcon,
   BanknotesIcon,
   ChartBarIcon,
 } from "@heroicons/react/24/outline";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
   {
     name: "Budget",
-    href: "/budget/",
+    href: "/budget/overview",
     icon: CalculatorIcon,
-    children: [
-      { name: "Overview", href: "/budget/overview" },
-      { name: "Income", href: "/budget/income" },
-      { name: "Bills", href: "/budget/bills" },
-      { name: "Transactions", href: "/budget/transactions" },
-    ],
   },
     { name: "Accounts", href: "/accounts", icon: BanknotesIcon },
     { name: "Insights", href: "/insights", icon: ChartBarIcon },
@@ -47,7 +35,6 @@ function classNames(...classes) {
 
 export default function Header({ children, workspaceName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [budgetOpen, setBudgetOpen] = useState(false);
   const pathname = usePathname();
 
   return (
@@ -98,75 +85,26 @@ export default function Header({ children, workspaceName }) {
                       <ul role="list" className="-mx-2 space-y-1">
                         {navigation.map((item) => (
                           <li key={item.name}>
-                            {!item.children ? (
-                              <Link
-                                href={item.href}
+                            <Link
+                              href={item.href}
+                              className={classNames(
+                                pathname === item.href
+                                  ? "bg-white/5 text-black"
+                                  : "text-gray-400 hover:bg-white/5 hover:text-white",
+                                "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
+                              )}
+                            >
+                              <item.icon
+                                aria-hidden="true"
                                 className={classNames(
                                   pathname === item.href
-                                    ? "bg-white/5 text-black"
-                                    : "text-gray-400 hover:bg-white/5 hover:text-white",
-                                  "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
+                                    ? "text-black"
+                                    : "text-gray-400 group-hover:text-white",
+                                  "size-6 shrink-0",
                                 )}
-                              >
-                                <item.icon
-                                  aria-hidden="true"
-                                  className={classNames(
-                                    pathname === item.href
-                                      ? "text-black"
-                                      : "text-gray-400 group-hover:text-white",
-                                    "size-6 shrink-0",
-                                  )}
-                                />
-                                {item.name}
-                              </Link>
-                            ) : (
-                              <div>
-                                <button
-                                  onClick={() => setBudgetOpen(!budgetOpen)}
-                                  className={classNames(
-                                    pathname.startsWith(item.href)
-                                      ? "bg-white/5 text-black"
-                                      : "text-gray-400 hover:bg-white/5 hover:text-white",
-                                    "group flex w-full items-center gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
-                                  )}
-                                >
-                                  <item.icon
-                                    aria-hidden="true"
-                                    className={classNames(
-                                      pathname.startsWith(item.href)
-                                        ? "text-black"
-                                        : "text-gray-400 group-hover:text-white",
-                                      "size-6 shrink-0",
-                                    )}
-                                  />
-                                  {item.name}
-                                  {budgetOpen ? (
-                                    <ChevronDownIcon className="ml-auto size-5 shrink-0" />
-                                  ) : (
-                                    <ChevronRightIcon className="ml-auto size-5 shrink-0" />
-                                  )}
-                                </button>
-                                {budgetOpen && (
-                                  <ul className="mt-1 px-2">
-                                    {item.children.map((subItem) => (
-                                      <li key={subItem.name}>
-                                        <Link
-                                          href={subItem.href}
-                                          className={classNames(
-                                            pathname === subItem.href
-                                              ? "bg-white/5 text-black"
-                                              : "text-gray-400 hover:bg-white/5 hover:text-white",
-                                            "group flex gap-x-3 rounded-md p-2 pl-9 text-sm/6 font-semibold",
-                                          )}
-                                        >
-                                          {subItem.name}
-                                        </Link>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                )}
-                              </div>
-                            )}
+                              />
+                              {item.name}
+                            </Link>
                           </li>
                         ))}
                       </ul>
@@ -189,75 +127,26 @@ export default function Header({ children, workspaceName }) {
                   <ul role="list" className="-mx-2 space-y-1">
                     {navigation.map((item) => (
                       <li key={item.name}>
-                        {!item.children ? (
-                          <Link
-                            href={item.href}
+                        <Link
+                          href={item.href}
+                          className={classNames(
+                            pathname === item.href
+                              ? "bg-white/5 text-black"
+                              : "text-gray-400 hover:bg-white/5 hover:text-white",
+                            "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
+                          )}
+                        >
+                          <item.icon
+                            aria-hidden="true"
                             className={classNames(
                               pathname === item.href
-                                ? "bg-white/5 text-black"
-                                : "text-gray-400 hover:bg-white/5 hover:text-white",
-                              "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
+                                ? "text-black"
+                                : "text-gray-400 group-hover:text-white",
+                              "size-6 shrink-0",
                             )}
-                          >
-                            <item.icon
-                              aria-hidden="true"
-                              className={classNames(
-                                pathname === item.href
-                                  ? "text-black"
-                                  : "text-gray-400 group-hover:text-white",
-                                "size-6 shrink-0",
-                              )}
-                            />
-                            {item.name}
-                          </Link>
-                        ) : (
-                          <div>
-                            <button
-                              onClick={() => setBudgetOpen(!budgetOpen)}
-                              className={classNames(
-                                pathname.startsWith(item.href)
-                                  ? "bg-white/5 text-black"
-                                  : "text-gray-400 hover:bg-white/5 hover:text-white",
-                                "group flex w-full items-center gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
-                              )}
-                            >
-                              <item.icon
-                                aria-hidden="true"
-                                className={classNames(
-                                  pathname.startsWith(item.href)
-                                    ? "text-black"
-                                    : "text-gray-400 group-hover:text-white",
-                                  "size-6 shrink-0",
-                                )}
-                              />
-                              {item.name}
-                              {budgetOpen ? (
-                                <ChevronDownIcon className="ml-auto size-5 shrink-0" />
-                              ) : (
-                                <ChevronRightIcon className="ml-auto size-5 shrink-0" />
-                              )}
-                            </button>
-                            {budgetOpen && (
-                              <ul className="mt-1 px-2">
-                                {item.children.map((subItem) => (
-                                  <li key={subItem.name}>
-                                    <Link
-                                      href={subItem.href}
-                                      className={classNames(
-                                        pathname === subItem.href
-                                          ? "bg-white/5 text-black"
-                                          : "text-gray-400 hover:bg-white/5 hover:text-white",
-                                        "group flex gap-x-3 rounded-md p-2 pl-9 text-sm/6 font-semibold",
-                                      )}
-                                    >
-                                      {subItem.name}
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        )}
+                          />
+                          {item.name}
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -290,9 +179,6 @@ export default function Header({ children, workspaceName }) {
             <span className="sr-only">Open sidebar</span>
             <Bars3Icon aria-hidden="true" className="size-6" />
           </button>
-          <div className="flex-1 text-sm/6 font-semibold text-white">
-            Dashboard
-          </div>
           <a href="#">
             <span className="sr-only">Your profile</span>
             <img

@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import AddBillModal from "@/app/components/AddBillModal";
-import EditBillModal from "@/app/components/EditBillModal";
-import DeleteBillModal from "@/app/components/DeleteBillModal";
+import AddExpenseModal from "@/app/components/AddExpenseModal";
+import EditExpenseModal from "@/app/components/EditExpenseModal";
+import DeleteExpenseModal from "@/app/components/DeleteExpenseModal";
 
-export default function BillsList({ bills }) {
+export default function ExpensesList({ expenses }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedBill, setSelectedBill] = useState(null);
+  const [selectedExpense, setSelectedExpense] = useState(null);
 
   // Format currency
   const formatCurrency = (amount) => {
@@ -19,19 +19,19 @@ export default function BillsList({ bills }) {
     }).format(amount);
   };
 
-  const handleEditClick = (bill) => {
-    setSelectedBill(bill);
+  const handleEditClick = (expense) => {
+    setSelectedExpense(expense);
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteClick = (bill) => {
-    setSelectedBill(bill);
+  const handleDeleteClick = (expense) => {
+    setSelectedExpense(expense);
     setIsDeleteModalOpen(true);
   };
 
   // Format due date based on recurrence type
-  const formatDueDate = (bill) => {
-    if (bill.recurrence_type === "weekly") {
+  const formatDueDate = (expense) => {
+    if (expense.recurrence_type === "weekly") {
       const dayNames = [
         "Sunday",
         "Monday",
@@ -41,9 +41,11 @@ export default function BillsList({ bills }) {
         "Friday",
         "Saturday",
       ];
-      return bill.weekly_days?.map((day) => dayNames[day]).join(", ") || "N/A";
-    } else if (bill.recurrence_type === "monthly") {
-      if (bill.day_of_month === -1) {
+      return (
+        expense.weekly_days?.map((day) => dayNames[day]).join(", ") || "N/A"
+      );
+    } else if (expense.recurrence_type === "monthly") {
+      if (expense.day_of_month === -1) {
         return "Last day of month";
       }
       const getOrdinal = (n) => {
@@ -51,9 +53,9 @@ export default function BillsList({ bills }) {
         const v = n % 100;
         return n + (s[(v - 20) % 10] || s[v] || s[0]);
       };
-      return getOrdinal(bill.day_of_month);
-    } else if (bill.recurrence_type === "yearly") {
-      return new Date(bill.yearly_date).toLocaleDateString("en-US", {
+      return getOrdinal(expense.day_of_month);
+    } else if (expense.recurrence_type === "yearly") {
+      return new Date(expense.yearly_date).toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
       });
@@ -61,56 +63,59 @@ export default function BillsList({ bills }) {
     return "N/A";
   };
 
- // Calculate totals from bills
-const calculateTotals = () => {
-  const totalAmount = bills.reduce((sum, bill) => sum + parseFloat(bill.amount), 0)
-  
-  // Group by category and calculate totals
-  const categoryTotals = bills.reduce((acc, bill) => {
-    const categoryName = bill.categories?.name || 'Uncategorized'
-    if (!acc[categoryName]) {
-      acc[categoryName] = 0
-    }
-    acc[categoryName] += parseFloat(bill.amount)
-    return acc
-  }, {})
+  // Calculate totals from expenses
+  const calculateTotals = () => {
+    const totalAmount = expenses.reduce(
+      (sum, expense) => sum + parseFloat(expense.amount),
+      0,
+    );
 
-  // Get top 2 categories by amount
-  const sortedCategories = Object.entries(categoryTotals)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 2)
+    // Group by category and calculate totals
+    const categoryTotals = expenses.reduce((acc, expense) => {
+      const categoryName = expense.categories?.name || "Uncategorized";
+      if (!acc[categoryName]) {
+        acc[categoryName] = 0;
+      }
+      acc[categoryName] += parseFloat(expense.amount);
+      return acc;
+    }, {});
 
-  return {
-    total: totalAmount,
-    topCategories: sortedCategories
-  }
-}
+    // Get top 2 categories by amount
+    const sortedCategories = Object.entries(categoryTotals)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 2);
 
-const { total, topCategories } = calculateTotals()
+    return {
+      total: totalAmount,
+      topCategories: sortedCategories,
+    };
+  };
 
-const totals = [
-  { 
-    name: "Total Monthly Bills", 
-    stat: formatCurrency(total)
-  },
-  { 
-    name: topCategories[0]?.[0] || "No Categories", 
-    stat: topCategories[0] ? formatCurrency(topCategories[0][1]) : "$0.00"
-  },
-  { 
-    name: topCategories[1]?.[0] || "Other", 
-    stat: topCategories[1] ? formatCurrency(topCategories[1][1]) : "$0.00"
-  },
-]
+  const { total, topCategories } = calculateTotals();
+
+  const totals = [
+    {
+      name: "Total Monthly Expenses",
+      stat: formatCurrency(total),
+    },
+    {
+      name: topCategories[0]?.[0] || "No Categories",
+      stat: topCategories[0] ? formatCurrency(topCategories[0][1]) : "$0.00",
+    },
+    {
+      name: topCategories[1]?.[0] || "Other",
+      stat: topCategories[1] ? formatCurrency(topCategories[1][1]) : "$0.00",
+    },
+  ];
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold text-gray-900">Bills</h1>
+            <h1 className="text-base font-semibold text-gray-900">Expenses</h1>
             <p className="mt-2 text-sm text-gray-700">
-              A list of all your recurring bills including amount, due date, and
-              frequency.
+              A list of all your recurring expenses including amount, due date,
+              and frequency.
             </p>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -119,7 +124,7 @@ const totals = [
               onClick={() => setIsModalOpen(true)}
               className="block rounded-md bg-[#00bf63] px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-[#33d98a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00bf63]"
             >
-              Add Bill
+              Add Expense
             </button>
           </div>
         </div>
@@ -142,7 +147,7 @@ const totals = [
           </dl>
         </div>
 
-        {bills.length === 0 ? (
+        {expenses.length === 0 ? (
           <div className="mt-8 text-center bg-white shadow rounded-lg p-12">
             <svg
               className="mx-auto h-12 w-12 text-gray-400"
@@ -158,10 +163,10 @@ const totals = [
               />
             </svg>
             <h3 className="mt-2 text-sm font-semibold text-gray-900">
-              No bills yet
+              No expenses yet
             </h3>
             <p className="mt-1 text-sm text-gray-500">
-              Get started by adding your first bill.
+              Get started by adding your first expense.
             </p>
             <div className="mt-6">
               <button
@@ -181,7 +186,7 @@ const totals = [
                     d="M12 4v16m8-8H4"
                   />
                 </svg>
-                Add Bill
+                Add Expense
               </button>
             </div>
           </div>
@@ -229,57 +234,58 @@ const totals = [
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                      {bills.map((bill) => (
-                        <tr key={bill.id}>
+                      {expenses.map((expense) => (
+                        <tr key={expense.id}>
                           <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                            {bill.description}
+                            {expense.description}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {formatCurrency(bill.amount)}
+                            {formatCurrency(expense.amount)}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {formatDueDate(bill)}
+                            {formatDueDate(expense)}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold text-green-800">
-                              {bill.recurrence_type.charAt(0).toUpperCase() +
-                                bill.recurrence_type.slice(1)}
+                              {expense.recurrence_type.charAt(0).toUpperCase() +
+                                expense.recurrence_type.slice(1)}
                             </span>
                           </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {bill.categories ? (
-                              <span
-                                className="inline-flex rounded-full px-2 text-xs font-semibold"
-                                style={{
-                                  backgroundColor: `${bill.categories.color}20`,
-                                  color: bill.categories.color,
-                                }}
-                              >
-                                {bill.categories.name}
-                              </span>
-                            ) : (
-                              <span className="text-gray-400 text-xs">
-                                Uncategorized
-                              </span>
-                            )}
-                          </td>
+                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+  {expense.categories ? (
+    <span
+      className="inline-flex rounded-full px-2 text-xs font-semibold"
+      style={{
+        backgroundColor: `${expense.categories.color}20`,
+        color: expense.categories.color,
+      }}
+    >
+      {expense.categories.name}
+    </span>
+  ) : (
+    <span className="text-gray-400 text-xs">
+      Uncategorized
+    </span>
+  )}
+</td>
+
                           <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                             <button
-                              onClick={() => handleEditClick(bill)}
+                              onClick={() => handleEditClick(expense)}
                               className="text-[#00bf63] hover:text-[#33d98a] mr-4"
                             >
                               Edit
                               <span className="sr-only">
-                                , {bill.description}
+                                , {expense.description}
                               </span>
                             </button>
                             <button
-                              onClick={() => handleDeleteClick(bill)}
+                              onClick={() => handleDeleteClick(expense)}
                               className="text-red-600 hover:text-red-900"
                             >
                               Delete
                               <span className="sr-only">
-                                , {bill.description}
+                                , {expense.description}
                               </span>
                             </button>
                           </td>
@@ -294,27 +300,27 @@ const totals = [
         )}
       </div>
 
-      <AddBillModal
+      <AddExpenseModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
 
-      <EditBillModal
+      <EditExpenseModal
         isOpen={isEditModalOpen}
         onClose={() => {
           setIsEditModalOpen(false);
-          setSelectedBill(null);
+          setSelectedExpense(null);
         }}
-        bill={selectedBill}
+        expense={selectedExpense}
       />
 
-      <DeleteBillModal
+      <DeleteExpenseModal
         isOpen={isDeleteModalOpen}
         onClose={() => {
           setIsDeleteModalOpen(false);
-          setSelectedBill(null);
+          setSelectedExpense(null);
         }}
-        bill={selectedBill}
+        expense={selectedExpense}
       />
     </>
   );

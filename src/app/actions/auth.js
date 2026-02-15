@@ -29,7 +29,7 @@ export async function signUp(formData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/onboarding')  // Changed from /dashboard to /onboarding
+  redirect('/onboarding')  // Changed from /budget/overview to /onboarding
 }
 
 export async function signIn(formData) {
@@ -47,7 +47,7 @@ export async function signIn(formData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect('/budget/overview')
 }
 
 export async function signOut() {

@@ -1,7 +1,6 @@
-export default function BillsPage() {
+export default function InsightsPage() {
   return (
     <div>
-      {/* Just your bills-specific content here */}
       <h2>Insights Content</h2>
     </div>
   );

@@ -1,9 +1,9 @@
 'use client'
 
-import { deleteBill } from '@/app/actions/bills'
+import { deleteExpense } from '@/app/actions/expenses'
 import { useState } from 'react'
 
-export default function DeleteBillModal({ isOpen, onClose, bill }) {
+export default function DeleteExpenseModal({ isOpen, onClose, expense }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -11,7 +11,7 @@ export default function DeleteBillModal({ isOpen, onClose, bill }) {
     setLoading(true)
     setError(null)
 
-    const result = await deleteBill(bill.id)
+    const result = await deleteExpense(expense.id)
 
     if (result?.error) {
       setError(result.error)
@@ -23,7 +23,7 @@ export default function DeleteBillModal({ isOpen, onClose, bill }) {
     }
   }
 
-  if (!isOpen || !bill) return null
+  if (!isOpen || !expense) return null
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}>
@@ -36,9 +36,9 @@ export default function DeleteBillModal({ isOpen, onClose, bill }) {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-gray-900">Delete Bill</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Delete Expense</h3>
               <p className="mt-2 text-sm text-gray-600">
-                Are you sure you want to delete <span className="font-semibold">"{bill.description}"</span>? This action cannot be undone.
+                Are you sure you want to delete <span className="font-semibold">"{expense.description}"</span>? This action cannot be undone.
               </p>
             </div>
           </div>

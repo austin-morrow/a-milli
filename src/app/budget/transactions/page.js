@@ -1,7 +1,6 @@
-export default function BillsPage() {
+export default function TransactionsPage() {
   return (
     <div>
-      {/* Just your bills-specific content here */}
       <h2>Transactions Content</h2>
     </div>
   );

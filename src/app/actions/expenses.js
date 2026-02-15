@@ -3,14 +3,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function createBill(formData) {
+export async function createExpense(formData) {
   const supabase = await createClient()
 
   // Get the current user
   const { data: { user }, error: userError } = await supabase.auth.getUser()
 
   if (userError || !user) {
-    return { error: 'You must be logged in to create a bill' }
+    return { error: 'You must be logged in to create a expense' }
   }
 
   // Get the user's workspace
@@ -34,13 +34,13 @@ export async function createBill(formData) {
     return { error: 'Description, amount, and frequency are required' }
   }
 
-  // Build the bill object
-  const billData = {
+  // Build the expense object
+  const expenseData = {
     workspace_id: workspaceMember.workspace_id,
     amount: parseFloat(amount),
     description: description,
     recurrence_type: recurrenceType,
-    is_recurring: true, // All bills are recurring now
+    is_recurring: true, // All expenses are recurring now
     category_id: formData.get('categoryId') || null,
   }
 
@@ -48,46 +48,46 @@ export async function createBill(formData) {
   if (recurrenceType === 'weekly') {
     const weeklyDays = formData.get('weeklyDays')
     if (!weeklyDays) {
-      return { error: 'Please select at least one day for weekly bills' }
+      return { error: 'Please select at least one day for weekly expenses' }
     }
-    billData.weekly_days = JSON.parse(weeklyDays)
+    expenseData.weekly_days = JSON.parse(weeklyDays)
   } 
   else if (recurrenceType === 'monthly') {
     const dayOfMonth = formData.get('dayOfMonth')
     if (!dayOfMonth) {
-      return { error: 'Day of month is required for monthly bills' }
+      return { error: 'Day of month is required for monthly expenses' }
     }
-    billData.day_of_month = dayOfMonth === 'last' ? -1 : parseInt(dayOfMonth)
+    expenseData.day_of_month = dayOfMonth === 'last' ? -1 : parseInt(dayOfMonth)
   } 
   else if (recurrenceType === 'yearly') {
     const yearlyDate = formData.get('yearlyDate')
     if (!yearlyDate) {
-      return { error: 'Date is required for yearly bills' }
+      return { error: 'Date is required for yearly expenses' }
     }
-    billData.yearly_date = yearlyDate
+    expenseData.yearly_date = yearlyDate
   }
 
-  // Create the bill
-  const { error: billError } = await supabase
-    .from('bills')
-    .insert(billData)
+  // Create the expense
+  const { error: expenseError } = await supabase
+    .from('expenses')
+    .insert(expenseData)
 
-  if (billError) {
-    return { error: 'Failed to create bill: ' + billError.message }
+  if (expenseError) {
+    return { error: 'Failed to create expense: ' + expenseError.message }
   }
 
-  revalidatePath('/bills')
+  revalidatePath('/expenses')
   return { success: true }
 }
 
-export async function updateBill(billId, formData) {
+export async function updateExpense(expenseId, formData) {
   const supabase = await createClient()
 
   // Get the current user
   const { data: { user }, error: userError } = await supabase.auth.getUser()
 
   if (userError || !user) {
-    return { error: 'You must be logged in to update a bill' }
+    return { error: 'You must be logged in to update a expense' }
   }
 
   // Get form data
@@ -107,7 +107,6 @@ export async function updateBill(billId, formData) {
     recurrence_type: recurrenceType,
     is_recurring: true,
     category_id: formData.get('categoryId') || null,
-    // Clear old values
     day_of_month: null,
     weekly_days: null,
     yearly_date: null,
@@ -117,59 +116,59 @@ export async function updateBill(billId, formData) {
   if (recurrenceType === 'weekly') {
     const weeklyDays = formData.get('weeklyDays')
     if (!weeklyDays) {
-      return { error: 'Please select at least one day for weekly bills' }
+      return { error: 'Please select at least one day for weekly expenses' }
     }
     updateData.weekly_days = JSON.parse(weeklyDays)
   } 
   else if (recurrenceType === 'monthly') {
     const dayOfMonth = formData.get('dayOfMonth')
     if (!dayOfMonth) {
-      return { error: 'Day of month is required for monthly bills' }
+      return { error: 'Day of month is required for monthly expenses' }
     }
     updateData.day_of_month = dayOfMonth === 'last' ? -1 : parseInt(dayOfMonth)
   } 
   else if (recurrenceType === 'yearly') {
     const yearlyDate = formData.get('yearlyDate')
     if (!yearlyDate) {
-      return { error: 'Date is required for yearly bills' }
+      return { error: 'Date is required for yearly expenses' }
     }
     updateData.yearly_date = yearlyDate
   }
 
-  // Update the bill
-  const { error: billError } = await supabase
-    .from('bills')
+  // Update the expense
+  const { error: expenseError } = await supabase
+    .from('expenses')
     .update(updateData)
-    .eq('id', billId)
+    .eq('id', expenseId)
 
-  if (billError) {
-    return { error: 'Failed to update bill: ' + billError.message }
+  if (expenseError) {
+    return { error: 'Failed to update expense: ' + expenseError.message }
   }
 
-  revalidatePath('/bills')
+  revalidatePath('/expenses')
   return { success: true }
 }
 
-export async function deleteBill(billId) {
+export async function deleteExpense(expenseId) {
   const supabase = await createClient()
 
   // Get the current user
   const { data: { user }, error: userError } = await supabase.auth.getUser()
 
   if (userError || !user) {
-    return { error: 'You must be logged in to delete a bill' }
+    return { error: 'You must be logged in to delete a expense' }
   }
 
-  // Delete the bill
-  const { error: billError } = await supabase
-    .from('bills')
+  // Delete the expense
+  const { error: expenseError } = await supabase
+    .from('expenses')
     .delete()
-    .eq('id', billId)
+    .eq('id', expenseId)
 
-  if (billError) {
-    return { error: 'Failed to delete bill: ' + billError.message }
+  if (expenseError) {
+    return { error: 'Failed to delete expense: ' + expenseError.message }
   }
 
-  revalidatePath('/bills')
+  revalidatePath('/expenses')
   return { success: true }
 }
