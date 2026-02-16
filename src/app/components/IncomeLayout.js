@@ -1,60 +1,69 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import AddRecurringIncomeModal from '@/app/components/AddRecurringIncomeModal'
-import EditRecurringIncomeModal from '@/app/components/EditRecurringIncomeModal'
-import DeleteIncomeModal from '@/app/components/DeleteIncomeModal'
-import AddMiscIncomeModal from '@/app/components/AddMiscIncomeModal'
-import EditMiscIncomeModal from '@/app/components/EditMiscIncomeModal'
+import { useState } from "react";
+import AddRecurringIncomeModal from "@/app/components/AddRecurringIncomeModal";
+import EditRecurringIncomeModal from "@/app/components/EditRecurringIncomeModal";
+import DeleteIncomeModal from "@/app/components/DeleteIncomeModal";
+import AddMiscIncomeModal from "@/app/components/AddMiscIncomeModal";
+import EditMiscIncomeModal from "@/app/components/EditMiscIncomeModal";
 
-export default function IncomeLayout({ recurringIncome, miscIncome, accounts }) {
-  const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false)
-  const [isEditRecurringModalOpen, setIsEditRecurringModalOpen] = useState(false)
-  const [selectedRecurring, setSelectedRecurring] = useState(null)
-  
-  const [isMiscModalOpen, setIsMiscModalOpen] = useState(false)
-  const [isEditMiscModalOpen, setIsEditMiscModalOpen] = useState(false)
-  const [selectedMisc, setSelectedMisc] = useState(null)
-  
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [deleteItem, setDeleteItem] = useState(null)
+export default function IncomeLayout({
+  recurringIncome,
+  miscIncome,
+  accounts,
+}) {
+  const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
+  const [isEditRecurringModalOpen, setIsEditRecurringModalOpen] =
+    useState(false);
+  const [selectedRecurring, setSelectedRecurring] = useState(null);
+
+  const [isMiscModalOpen, setIsMiscModalOpen] = useState(false);
+  const [isEditMiscModalOpen, setIsEditMiscModalOpen] = useState(false);
+  const [selectedMisc, setSelectedMisc] = useState(null);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteItem, setDeleteItem] = useState(null);
 
   // Format currency
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount)
-  }
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
+  };
 
   // Format date
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-  }
+    if (!dateString) return "";
+    // Parse as local date to avoid timezone shift
+    const [year, month, day] = dateString.split("-");
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
 
   const handleEditRecurring = (income) => {
-    setSelectedRecurring(income)
-    setIsEditRecurringModalOpen(true)
-  }
+    setSelectedRecurring(income);
+    setIsEditRecurringModalOpen(true);
+  };
 
   const handleDeleteRecurring = (income) => {
-    setDeleteItem({ ...income, type: 'recurring' })
-    setIsDeleteModalOpen(true)
-  }
+    setDeleteItem({ ...income, type: "recurring" });
+    setIsDeleteModalOpen(true);
+  };
 
   const handleEditMisc = (income) => {
-    setSelectedMisc(income)
-    setIsEditMiscModalOpen(true)
-  }
+    setSelectedMisc(income);
+    setIsEditMiscModalOpen(true);
+  };
 
   const handleDeleteMisc = (income) => {
-    setDeleteItem({ ...income, type: 'misc' })
-    setIsDeleteModalOpen(true)
-  }
+    setDeleteItem({ ...income, type: "misc" });
+    setIsDeleteModalOpen(true);
+  };
 
   return (
     <>
@@ -113,18 +122,19 @@ export default function IncomeLayout({ recurringIncome, miscIncome, accounts }) 
                               {income.description}
                             </p>
                           )}
-<div className="mt-2 flex gap-2 text-xs">
-  {income.planned_amount && (
-    <span className="text-gray-600">
-      Planned: {formatCurrency(income.planned_amount)}
-    </span>
-  )}
-  {income.received_amount && (
-    <span className="text-green-600">
-      Received: {formatCurrency(income.received_amount)}
-    </span>
-  )}
-</div>
+                          <div className="mt-2 flex gap-2 text-xs">
+                            {income.planned_amount && (
+                              <span className="text-gray-600">
+                                Planned: {formatCurrency(income.planned_amount)}
+                              </span>
+                            )}
+                            {income.received_amount && (
+                              <span className="text-green-600">
+                                Received:{" "}
+                                {formatCurrency(income.received_amount)}
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <div className="flex gap-2">
                           <button
@@ -224,8 +234,8 @@ export default function IncomeLayout({ recurringIncome, miscIncome, accounts }) 
       <EditRecurringIncomeModal
         isOpen={isEditRecurringModalOpen}
         onClose={() => {
-          setIsEditRecurringModalOpen(false)
-          setSelectedRecurring(null)
+          setIsEditRecurringModalOpen(false);
+          setSelectedRecurring(null);
         }}
         income={selectedRecurring}
         accounts={accounts}
@@ -240,8 +250,8 @@ export default function IncomeLayout({ recurringIncome, miscIncome, accounts }) 
       <EditMiscIncomeModal
         isOpen={isEditMiscModalOpen}
         onClose={() => {
-          setIsEditMiscModalOpen(false)
-          setSelectedMisc(null)
+          setIsEditMiscModalOpen(false);
+          setSelectedMisc(null);
         }}
         income={selectedMisc}
         accounts={accounts}
@@ -250,11 +260,11 @@ export default function IncomeLayout({ recurringIncome, miscIncome, accounts }) 
       <DeleteIncomeModal
         isOpen={isDeleteModalOpen}
         onClose={() => {
-          setIsDeleteModalOpen(false)
-          setDeleteItem(null)
+          setIsDeleteModalOpen(false);
+          setDeleteItem(null);
         }}
         item={deleteItem}
       />
     </>
-  )
+  );
 }
