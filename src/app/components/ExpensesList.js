@@ -251,23 +251,23 @@ export default function ExpensesList({ expenses }) {
                                 expense.recurrence_type.slice(1)}
                             </span>
                           </td>
-                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-  {expense.categories ? (
-    <span
-      className="inline-flex rounded-full px-2 text-xs font-semibold"
-      style={{
-        backgroundColor: `${expense.categories.color}20`,
-        color: expense.categories.color,
-      }}
-    >
-      {expense.categories.name}
-    </span>
-  ) : (
-    <span className="text-gray-400 text-xs">
-      Uncategorized
-    </span>
-  )}
-</td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {expense.categories ? (
+                              <span
+                                className="inline-flex rounded-full px-2 text-xs font-semibold"
+                                style={{
+                                  backgroundColor: `${expense.categories.color}20`,
+                                  color: expense.categories.color,
+                                }}
+                              >
+                                {expense.categories.name}
+                              </span>
+                            ) : (
+                              <span className="text-gray-400 text-xs">
+                                Uncategorized
+                              </span>
+                            )}
+                          </td>
 
                           <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                             <button

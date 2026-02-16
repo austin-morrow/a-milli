@@ -1,37 +1,40 @@
-'use client'
+"use client";
 
-import { createAccount } from '@/app/actions/accounts'
-import { useState } from 'react'
+import { createAccount } from "@/app/actions/accounts";
+import { useState } from "react";
 
 export default function AddAccountModal({ isOpen, onClose }) {
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [accountType, setAccountType] = useState('banking')
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [accountType, setAccountType] = useState("banking");
 
   async function handleSubmit(e) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    const formData = new FormData(e.currentTarget)
-    const result = await createAccount(formData)
+    const formData = new FormData(e.currentTarget);
+    const result = await createAccount(formData);
 
     if (result?.error) {
-      setError(result.error)
-      setLoading(false)
+      setError(result.error);
+      setLoading(false);
     } else {
       // Success - close modal and reset form
-      e.target.reset()
-      setAccountType('banking')
-      setLoading(false)
-      onClose()
+      e.target.reset();
+      setAccountType("banking");
+      setLoading(false);
+      onClose();
     }
   }
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}>
+    <div
+      className="fixed inset-0 flex items-center justify-center z-50"
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.75)" }}
+    >
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="px-6 py-4 border-b border-gray-200 sticky top-0 bg-white">
           <div className="flex items-center justify-between">
@@ -40,8 +43,18 @@ export default function AddAccountModal({ isOpen, onClose }) {
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -50,7 +63,10 @@ export default function AddAccountModal({ isOpen, onClose }) {
         <form onSubmit={handleSubmit} className="px-6 py-4">
           <div className="space-y-4">
             <div>
-              <label htmlFor="accountType" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="accountType"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Account Type
               </label>
               <select
@@ -65,10 +81,13 @@ export default function AddAccountModal({ isOpen, onClose }) {
               </select>
             </div>
 
-            {accountType === 'banking' && (
+            {accountType === "banking" && (
               <>
                 <div>
-                  <label htmlFor="accountSubtype" className="block text-sm font-medium text-gray-900">
+                  <label
+                    htmlFor="accountSubtype"
+                    className="block text-sm font-medium text-gray-900"
+                  >
                     Account Subtype
                   </label>
                   <select
@@ -84,7 +103,10 @@ export default function AddAccountModal({ isOpen, onClose }) {
                 </div>
 
                 <div>
-                  <label htmlFor="institutionName" className="block text-sm font-medium text-gray-900">
+                  <label
+                    htmlFor="institutionName"
+                    className="block text-sm font-medium text-gray-900"
+                  >
                     Institution Name
                   </label>
                   <input
@@ -100,7 +122,10 @@ export default function AddAccountModal({ isOpen, onClose }) {
             )}
 
             <div>
-              <label htmlFor="nickname" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="nickname"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Account Nickname
               </label>
               <input
@@ -114,7 +139,10 @@ export default function AddAccountModal({ isOpen, onClose }) {
             </div>
 
             <div>
-              <label htmlFor="balance" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="balance"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Current Balance
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -152,11 +180,11 @@ export default function AddAccountModal({ isOpen, onClose }) {
               disabled={loading}
               className="flex-1 rounded-md bg-[#00bf63] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#33d98a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00bf63] disabled:opacity-50"
             >
-              {loading ? 'Adding...' : 'Add Account'}
+              {loading ? "Adding..." : "Add Account"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }

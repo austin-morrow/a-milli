@@ -1,30 +1,32 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import AccountsList from '@/app/components/AccountsList'
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import AccountsList from "@/app/components/AccountsList";
 
 export default async function AccountsPage() {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   // Get current user
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/login')
+    redirect("/login");
   }
 
   // Get user's workspace
   const { data: workspaceMember } = await supabase
-    .from('workspace_members')
-    .select('workspace_id')
-    .eq('user_id', user.id)
-    .single()
+    .from("workspace_members")
+    .select("workspace_id")
+    .eq("user_id", user.id)
+    .single();
 
   // Fetch accounts for the workspace
   const { data: accounts } = await supabase
-    .from('accounts')
-    .select('*')
-    .eq('workspace_id', workspaceMember.workspace_id)
-    .order('created_at', { ascending: false })
+    .from("accounts")
+    .select("*")
+    .eq("workspace_id", workspaceMember.workspace_id)
+    .order("created_at", { ascending: false });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -32,5 +34,5 @@ export default async function AccountsPage() {
         <AccountsList accounts={accounts || []} />
       </div>
     </div>
-  )
+  );
 }

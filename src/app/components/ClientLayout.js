@@ -18,7 +18,7 @@ export default function ClientLayout({ children, workspaceName }) {
       ) : (
         children
       )}
-      
+
       {/* Floating Spotify Player */}
       <div className="fixed bottom-4 right-4 w-80 z-50 shadow-lg">
         <iframe

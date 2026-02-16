@@ -1,42 +1,44 @@
-'use client'
+"use client";
 
-import { createWorkspace } from '@/app/actions/workspace'
-import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { createWorkspace } from "@/app/actions/workspace";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 export default function Onboarding() {
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [checkingAuth, setCheckingAuth] = useState(true)
-  const router = useRouter()
-  const supabase = createClient()
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const router = useRouter();
+  const supabase = createClient();
 
   useEffect(() => {
     async function checkUser() {
-      const { data: { user } } = await supabase.auth.getUser()
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
-        router.push('/login')
+        router.push("/login");
       } else {
-        setCheckingAuth(false)
+        setCheckingAuth(false);
       }
     }
-    
-    checkUser()
-  }, [router, supabase])
+
+    checkUser();
+  }, [router, supabase]);
 
   async function handleSubmit(e) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    const formData = new FormData(e.currentTarget)
-    const result = await createWorkspace(formData)
+    const formData = new FormData(e.currentTarget);
+    const result = await createWorkspace(formData);
 
     if (result?.error) {
-      setError(result.error)
-      setLoading(false)
+      setError(result.error);
+      setLoading(false);
     }
   }
 
@@ -45,7 +47,7 @@ export default function Onboarding() {
       <div className="flex min-h-full items-center justify-center">
         <p className="text-gray-600">Loading...</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -101,12 +103,12 @@ export default function Onboarding() {
                 disabled={loading}
                 className="flex w-full justify-center rounded-md bg-[#00bf63] px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-[#33d98a] focus-visible:outline focus:visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00bf63] disabled:opacity-50"
               >
-                {loading ? 'Creating workspace...' : 'Continue'}
+                {loading ? "Creating workspace..." : "Continue"}
               </button>
             </div>
           </form>
         </div>
       </div>
     </div>
-  )
+  );
 }

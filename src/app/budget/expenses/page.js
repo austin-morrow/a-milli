@@ -1,30 +1,32 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import ExpensesList from '@/app/components/ExpensesList'
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import ExpensesList from "@/app/components/ExpensesList";
 
 export default async function ExpensesPage() {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   // Get current user
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/login')
+    redirect("/login");
   }
 
   // Get user's workspace
   const { data: workspaceMember } = await supabase
-    .from('workspace_members')
-    .select('workspace_id')
-    .eq('user_id', user.id)
-    .single()
+    .from("workspace_members")
+    .select("workspace_id")
+    .eq("user_id", user.id)
+    .single();
 
   // Fetch expenses for the workspace WITH categories
   const { data: expenses } = await supabase
-    .from('expenses')
-    .select('*, categories(name, color))')
-    .eq('workspace_id', workspaceMember.workspace_id)
-    .order('day_of_month', { ascending: true })
+    .from("expenses")
+    .select("*, categories(name, color))")
+    .eq("workspace_id", workspaceMember.workspace_id)
+    .order("day_of_month", { ascending: true });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -32,5 +34,5 @@ export default async function ExpensesPage() {
         <ExpensesList expenses={expenses || []} />
       </div>
     </div>
-  )
+  );
 }

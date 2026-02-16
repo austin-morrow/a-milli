@@ -9,7 +9,7 @@ export default function AddExpenseModal({ isOpen, onClose }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [recurrenceType, setRecurrenceType] = useState("monthly");
-  const [selectedCategory, setSelectedCategory] = useState(''); // ADD THIS LINE
+  const [selectedCategory, setSelectedCategory] = useState(""); // ADD THIS LINE
 
   const [selectedDays, setSelectedDays] = useState([]);
 
@@ -43,7 +43,6 @@ export default function AddExpenseModal({ isOpen, onClose }) {
         return `${n}th`;
     }
   };
-
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -265,25 +264,28 @@ export default function AddExpenseModal({ isOpen, onClose }) {
               </div>
             )}
 
-<div>
-  <label htmlFor="category" className="block text-sm font-medium text-gray-900">
-    Category
-  </label>
-  <select
-    id="category"
-    name="categoryId"
-    value={selectedCategory}
-    onChange={(e) => setSelectedCategory(e.target.value)}
-    className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
-  >
-    <option value="">None</option>
-    {categories.map((category) => (
-      <option key={category.id} value={category.id}>
-        {category.name}
-      </option>
-    ))}
-  </select>
-</div>
+            <div>
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-gray-900"
+              >
+                Category
+              </label>
+              <select
+                id="category"
+                name="categoryId"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
+              >
+                <option value="">None</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             {error && (
               <div className="rounded-md bg-red-50 p-3">

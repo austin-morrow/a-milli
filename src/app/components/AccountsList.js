@@ -1,36 +1,39 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import AddAccountModal from '@/app/components/AddAccountModal'
-import EditAccountModal from '@/app/components/EditAccountModal'
-import DeleteAccountModal from '@/app/components/DeleteAccountModal'
+import { useState } from "react";
+import AddAccountModal from "@/app/components/AddAccountModal";
+import EditAccountModal from "@/app/components/EditAccountModal";
+import DeleteAccountModal from "@/app/components/DeleteAccountModal";
 
 export default function AccountsList({ accounts }) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [selectedAccount, setSelectedAccount] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState(null);
 
   // Format currency
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount)
-  }
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
+  };
 
   // Calculate total balance
-  const totalBalance = accounts.reduce((sum, account) => sum + parseFloat(account.balance || 0), 0)
+  const totalBalance = accounts.reduce(
+    (sum, account) => sum + parseFloat(account.balance || 0),
+    0,
+  );
 
   const handleEditClick = (account) => {
-    setSelectedAccount(account)
-    setIsEditModalOpen(true)
-  }
+    setSelectedAccount(account);
+    setIsEditModalOpen(true);
+  };
 
   const handleDeleteClick = (account) => {
-    setSelectedAccount(account)
-    setIsDeleteModalOpen(true)
-  }
+    setSelectedAccount(account);
+    setIsDeleteModalOpen(true);
+  };
 
   return (
     <>
@@ -68,7 +71,9 @@ export default function AccountsList({ accounts }) {
                 d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
               />
             </svg>
-            <h3 className="mt-2 text-sm font-semibold text-gray-900">No accounts yet</h3>
+            <h3 className="mt-2 text-sm font-semibold text-gray-900">
+              No accounts yet
+            </h3>
             <p className="mt-1 text-sm text-gray-500">
               Get started by adding your first account.
             </p>
@@ -77,8 +82,18 @@ export default function AccountsList({ accounts }) {
                 onClick={() => setIsModalOpen(true)}
                 className="inline-flex items-center gap-2 rounded-md bg-[#00bf63] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#33d98a]"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
                 </svg>
                 Add Account
               </button>
@@ -97,26 +112,28 @@ export default function AccountsList({ accounts }) {
                       <h3 className="text-lg font-medium text-gray-900">
                         {account.nickname}
                       </h3>
-                      {account.account_type === 'banking' && (
+                      {account.account_type === "banking" && (
                         <p className="mt-1 text-sm text-gray-500">
                           {account.institution_name} • {account.account_subtype}
                         </p>
                       )}
-                      {account.account_type === 'cash' && (
-                        <p className="mt-1 text-sm text-gray-500">Cash Account</p>
+                      {account.account_type === "cash" && (
+                        <p className="mt-1 text-sm text-gray-500">
+                          Cash Account
+                        </p>
                       )}
                     </div>
                     <span
                       className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                        account.account_type === 'banking'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-green-100 text-green-800'
+                        account.account_type === "banking"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-green-100 text-green-800"
                       }`}
                     >
-                      {account.account_type === 'banking' ? 'Banking' : 'Cash'}
+                      {account.account_type === "banking" ? "Banking" : "Cash"}
                     </span>
                   </div>
-                  
+
                   <div className="mt-4">
                     <p className="text-2xl font-bold text-gray-900">
                       {formatCurrency(account.balance)}
@@ -145,13 +162,16 @@ export default function AccountsList({ accounts }) {
         )}
       </div>
 
-      <AddAccountModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <AddAccountModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
 
       <EditAccountModal
         isOpen={isEditModalOpen}
         onClose={() => {
-          setIsEditModalOpen(false)
-          setSelectedAccount(null)
+          setIsEditModalOpen(false);
+          setSelectedAccount(null);
         }}
         account={selectedAccount}
       />
@@ -159,11 +179,11 @@ export default function AccountsList({ accounts }) {
       <DeleteAccountModal
         isOpen={isDeleteModalOpen}
         onClose={() => {
-          setIsDeleteModalOpen(false)
-          setSelectedAccount(null)
+          setIsDeleteModalOpen(false);
+          setSelectedAccount(null);
         }}
         account={selectedAccount}
       />
     </>
-  )
+  );
 }

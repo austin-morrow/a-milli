@@ -1,92 +1,92 @@
-'use client'
+"use client";
 
-import { updateExpense } from '@/app/actions/expenses'
-import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { updateExpense } from "@/app/actions/expenses";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function EditExpenseModal({ isOpen, onClose, expense }) {
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [recurrenceType, setRecurrenceType] = useState('monthly')
-  const [selectedDays, setSelectedDays] = useState([])
-  const [categories, setCategories] = useState([])
-  const [selectedCategory, setSelectedCategory] = useState('')
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [recurrenceType, setRecurrenceType] = useState("monthly");
+  const [selectedDays, setSelectedDays] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const daysOfWeek = [
-    { value: 0, label: 'Sun' },
-    { value: 1, label: 'Mon' },
-    { value: 2, label: 'Tue' },
-    { value: 3, label: 'Wed' },
-    { value: 4, label: 'Thu' },
-    { value: 5, label: 'Fri' },
-    { value: 6, label: 'Sat' },
-  ]
+    { value: 0, label: "Sun" },
+    { value: 1, label: "Mon" },
+    { value: 2, label: "Tue" },
+    { value: 3, label: "Wed" },
+    { value: 4, label: "Thu" },
+    { value: 5, label: "Fri" },
+    { value: 6, label: "Sat" },
+  ];
 
   // Initialize form with expense data when modal opens
   useEffect(() => {
     if (expense) {
-      setRecurrenceType(expense.recurrence_type || 'monthly')
-      setSelectedDays(expense.weekly_days || [])
-      setSelectedCategory(expense.category_id || '')
+      setRecurrenceType(expense.recurrence_type || "monthly");
+      setSelectedDays(expense.weekly_days || []);
+      setSelectedCategory(expense.category_id || "");
     }
-  }, [expense])
+  }, [expense]);
 
   // Fetch categories when modal opens
   useEffect(() => {
     async function fetchCategories() {
-      const supabase = createClient()
+      const supabase = createClient();
       const { data } = await supabase
-        .from('categories')
-        .select('*')
-        .order('name')
-      
+        .from("categories")
+        .select("*")
+        .order("name");
+
       if (data) {
-        setCategories(data)
+        setCategories(data);
       }
     }
-    
-    if (isOpen) {
-      fetchCategories()
-    }
-  }, [isOpen])
 
+    if (isOpen) {
+      fetchCategories();
+    }
+  }, [isOpen]);
 
   const toggleDay = (day) => {
-    setSelectedDays(prev => 
-      prev.includes(day) 
-        ? prev.filter(d => d !== day)
-        : [...prev, day]
-    )
-  }
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+    );
+  };
 
   async function handleSubmit(e) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    const formData = new FormData(e.currentTarget)
-    
+    const formData = new FormData(e.currentTarget);
+
     // Add recurrence type and selected days
-    formData.set('recurrenceType', recurrenceType)
-    if (recurrenceType === 'weekly') {
-      formData.set('weeklyDays', JSON.stringify(selectedDays))
+    formData.set("recurrenceType", recurrenceType);
+    if (recurrenceType === "weekly") {
+      formData.set("weeklyDays", JSON.stringify(selectedDays));
     }
 
-    const result = await updateExpense(expense.id, formData)
+    const result = await updateExpense(expense.id, formData);
 
     if (result?.error) {
-      setError(result.error)
-      setLoading(false)
+      setError(result.error);
+      setLoading(false);
     } else {
       // Success - close modal
-      setLoading(false)
-      onClose()
+      setLoading(false);
+      onClose();
     }
   }
 
-  if (!isOpen || !expense) return null
+  if (!isOpen || !expense) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}>
+    <div
+      className="fixed inset-0 flex items-center justify-center z-50"
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.75)" }}
+    >
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="px-6 py-4 border-b border-gray-200 sticky top-0 bg-white">
           <div className="flex items-center justify-between">
@@ -95,8 +95,18 @@ export default function EditExpenseModal({ isOpen, onClose, expense }) {
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -105,7 +115,10 @@ export default function EditExpenseModal({ isOpen, onClose, expense }) {
         <form onSubmit={handleSubmit} className="px-6 py-4">
           <div className="space-y-4">
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Description
               </label>
               <input
@@ -120,7 +133,10 @@ export default function EditExpenseModal({ isOpen, onClose, expense }) {
             </div>
 
             <div>
-              <label htmlFor="amount" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="amount"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Amount
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -142,7 +158,10 @@ export default function EditExpenseModal({ isOpen, onClose, expense }) {
             </div>
 
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Category
               </label>
               <select
@@ -161,9 +180,11 @@ export default function EditExpenseModal({ isOpen, onClose, expense }) {
               </select>
             </div>
 
-
             <div>
-              <label htmlFor="recurrenceType" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="recurrenceType"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Frequency
               </label>
               <select
@@ -179,22 +200,22 @@ export default function EditExpenseModal({ isOpen, onClose, expense }) {
             </div>
 
             {/* Weekly Options */}
-            {recurrenceType === 'weekly' && (
+            {recurrenceType === "weekly" && (
               <div className="pl-6 space-y-4 border-l-2 border-gray-200">
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">
                     Days of the week
                   </label>
                   <div className="flex gap-2 flex-wrap">
-                    {daysOfWeek.map(day => (
+                    {daysOfWeek.map((day) => (
                       <button
                         key={day.value}
                         type="button"
                         onClick={() => toggleDay(day.value)}
                         className={`px-3 py-2 rounded-md text-sm font-medium ${
                           selectedDays.includes(day.value)
-                            ? 'bg-[#00bf63] text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            ? "bg-[#00bf63] text-white"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                         }`}
                       >
                         {day.label}
@@ -206,22 +227,31 @@ export default function EditExpenseModal({ isOpen, onClose, expense }) {
             )}
 
             {/* Monthly Options */}
-            {recurrenceType === 'monthly' && (
+            {recurrenceType === "monthly" && (
               <div className="pl-6 space-y-4 border-l-2 border-gray-200">
                 <div>
-                  <label htmlFor="dayOfMonth" className="block text-sm font-medium text-gray-900">
+                  <label
+                    htmlFor="dayOfMonth"
+                    className="block text-sm font-medium text-gray-900"
+                  >
                     Day of Month
                   </label>
                   <select
                     id="dayOfMonth"
                     name="dayOfMonth"
                     required
-                    defaultValue={expense.day_of_month === -1 ? 'last' : expense.day_of_month}
+                    defaultValue={
+                      expense.day_of_month === -1
+                        ? "last"
+                        : expense.day_of_month
+                    }
                     className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
                   >
                     <option value="">Select day...</option>
-                    {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
-                      <option key={day} value={day}>{day}</option>
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
+                      <option key={day} value={day}>
+                        {day}
+                      </option>
                     ))}
                     <option value="last">Last day of month</option>
                   </select>
@@ -230,10 +260,13 @@ export default function EditExpenseModal({ isOpen, onClose, expense }) {
             )}
 
             {/* Yearly Options */}
-            {recurrenceType === 'yearly' && (
+            {recurrenceType === "yearly" && (
               <div className="pl-6 space-y-4 border-l-2 border-gray-200">
                 <div>
-                  <label htmlFor="yearlyDate" className="block text-sm font-medium text-gray-900">
+                  <label
+                    htmlFor="yearlyDate"
+                    className="block text-sm font-medium text-gray-900"
+                  >
                     Date (Month & Day)
                   </label>
                   <input
@@ -268,11 +301,11 @@ export default function EditExpenseModal({ isOpen, onClose, expense }) {
               disabled={loading}
               className="flex-1 rounded-md bg-[#00bf63] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#33d98a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00bf63] disabled:opacity-50"
             >
-              {loading ? 'Saving...' : 'Save Changes'}
+              {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }

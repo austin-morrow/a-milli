@@ -24,9 +24,9 @@ const navigation = [
     href: "/budget/overview",
     icon: CalculatorIcon,
   },
-    { name: "Accounts", href: "/accounts", icon: BanknotesIcon },
-    { name: "Insights", href: "/insights", icon: ChartBarIcon },
-    { name: "Goals", href: "/goals", icon: TrophyIcon },
+  { name: "Accounts", href: "/accounts", icon: BanknotesIcon },
+  { name: "Insights", href: "/insights", icon: ChartBarIcon },
+  { name: "Goals", href: "/goals", icon: TrophyIcon },
 ];
 
 function classNames(...classes) {

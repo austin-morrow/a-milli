@@ -1,36 +1,36 @@
-'use client'
+"use client";
 
-import { signUp } from '@/app/actions/auth';
-import { useState } from 'react';
+import { signUp } from "@/app/actions/auth";
+import { useState } from "react";
 import Link from "next/link";
 
 export default function SignUp() {
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-  
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   async function handleSubmit(e) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    const formData = new FormData(e.currentTarget)
+    const formData = new FormData(e.currentTarget);
 
-  // Check if passwords match
-  const password = formData.get('password')
-  const confirmPassword = formData.get('confirmPassword')
+    // Check if passwords match
+    const password = formData.get("password");
+    const confirmPassword = formData.get("confirmPassword");
 
-  if (password !== confirmPassword) {
-    setError('Passwords do not match')
-    setLoading(false)
-    return
-  }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
 
-  const result = await signUp(formData)
+    const result = await signUp(formData);
 
-  if (result?.error) {
-    setError(result.error)
-    setLoading(false)
-  }
+    if (result?.error) {
+      setError(result.error);
+      setLoading(false);
+    }
   }
 
   return (
@@ -161,8 +161,7 @@ export default function SignUp() {
                   disabled={loading}
                   className="flex w-full justify-center rounded-md bg-[#00bf63] px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-[#33d98a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00bf63]"
                 >
-                {loading ? 'Creating account...' : 'Sign up'}
-            
+                  {loading ? "Creating account..." : "Sign up"}
                 </button>
               </div>
             </form>
