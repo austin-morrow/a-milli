@@ -5,6 +5,7 @@ import { ChevronDownIcon } from "@heroicons/react/16/solid";
 
 const tabs = [
   { name: "Overview", href: "/budget/overview" },
+  { name: "Plan", href: "/budget/plan" },
   { name: "Income", href: "/budget/income" },
   { name: "Expenses", href: "/budget/expenses" },
   { name: "Transactions", href: "/budget/transactions" },
