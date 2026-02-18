@@ -331,3 +331,109 @@ export async function updateMiscIncome(incomeId, formData) {
   revalidatePath("/accounts");
   return { success: true };
 }
+
+export async function deleteRecurringIncome(incomeId) {
+  const supabase = await createClient()
+
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    return { error: 'You must be logged in' }
+  }
+
+  // Get income data before deleting to reverse balance change
+  const { data: income } = await supabase
+    .from('recurring_income')
+    .select('account_id, received_amount, date')
+    .eq('id', incomeId)
+    .single()
+
+  // Delete the income
+  const { error: incomeError } = await supabase
+    .from('recurring_income')
+    .delete()
+    .eq('id', incomeId)
+
+  if (incomeError) {
+    return { error: 'Failed to delete paycheck: ' + incomeError.message }
+  }
+
+  // Reverse balance change if it was applied
+  if (income?.received_amount) {
+    const incomeDate = new Date(income.date)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    if (incomeDate <= today) {
+      const { data: account } = await supabase
+        .from('accounts')
+        .select('balance')
+        .eq('id', income.account_id)
+        .single()
+
+      if (account) {
+        const newBalance = parseFloat(account.balance) - parseFloat(income.received_amount)
+        await supabase
+          .from('accounts')
+          .update({ balance: newBalance })
+          .eq('id', income.account_id)
+      }
+    }
+  }
+
+  revalidatePath('/income')
+  revalidatePath('/accounts')
+  return { success: true }
+}
+
+export async function deleteMiscIncome(incomeId) {
+  const supabase = await createClient()
+
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    return { error: 'You must be logged in' }
+  }
+
+  // Get income data before deleting to reverse balance change
+  const { data: income } = await supabase
+    .from('misc_income')
+    .select('account_id, amount, date')
+    .eq('id', incomeId)
+    .single()
+
+  // Delete the income
+  const { error: incomeError } = await supabase
+    .from('misc_income')
+    .delete()
+    .eq('id', incomeId)
+
+  if (incomeError) {
+    return { error: 'Failed to delete misc income: ' + incomeError.message }
+  }
+
+  // Reverse balance change if it was applied
+  if (income) {
+    const incomeDate = new Date(income.date)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    if (incomeDate <= today) {
+      const { data: account } = await supabase
+        .from('accounts')
+        .select('balance')
+        .eq('id', income.account_id)
+        .single()
+
+      if (account) {
+        const newBalance = parseFloat(account.balance) - parseFloat(income.amount)
+        await supabase
+          .from('accounts')
+          .update({ balance: newBalance })
+          .eq('id', income.account_id)
+      }
+    }
+  }
+
+  revalidatePath('/income')
+  revalidatePath('/accounts')
+  return { success: true }
+}

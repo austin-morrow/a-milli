@@ -50,10 +50,10 @@ export default function Header({ children, workspaceName }) {
 
   // Get current page name from pathname
   const currentPage =
-    navigation.find((item) => pathname.startsWith(item.href))?.name ||
-    pathname.split("/").filter(Boolean).pop()?.charAt(0).toUpperCase() +
-      pathname.split("/").filter(Boolean).pop()?.slice(1) ||
-    "Dashboard";
+  navigation.find((item) => pathname.startsWith(item.href.split('/').slice(0, 2).join('/')))?.name ||
+  pathname.split("/").filter(Boolean).pop()?.charAt(0).toUpperCase() +
+    pathname.split("/").filter(Boolean).pop()?.slice(1) ||
+  "Dashboard";
 
   return (
     <div>
