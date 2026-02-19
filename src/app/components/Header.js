@@ -105,7 +105,7 @@ export default function Header({ children, workspaceName }) {
                             className={classNames(
                               pathname.startsWith(item.href)
                                 ? "bg-white/5 text-black"
-                                : "text-gray-400 hover:bg-white/5 hover:text-white",
+                                : "text-gray-400 hover:bg-white/5",
                               "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
                             )}
                           >
@@ -144,8 +144,8 @@ export default function Header({ children, workspaceName }) {
       </Dialog>
 
       {/* Desktop Sidebar */}
-      <div className="hidden bg-white lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-white/10 bg-black/10 px-6">
+      <div className="hidden bg-[#fafaf7] border-r border-gray-200 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-white/10 px-6">
           <div className="flex h-16 shrink-0 items-center">
             <img alt="Your Company" src="/milli.svg" className="h-8 w-auto" />
           </div>
@@ -159,8 +159,8 @@ export default function Header({ children, workspaceName }) {
                         href={item.href}
                         className={classNames(
                           pathname.startsWith(item.href)
-                            ? "bg-white/5 text-black"
-                            : "text-gray-400 hover:bg-white/5 hover:text-white",
+                       ? "bg-gray-100 text-black"
+                            : "text-gray-400 hover:bg-gray-100 active:bg-gray-200",
                           "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
                         )}
                       >
@@ -169,7 +169,7 @@ export default function Header({ children, workspaceName }) {
                           className={classNames(
                             pathname.startsWith(item.href)
                               ? "text-black"
-                              : "text-gray-400 group-hover:text-white",
+                              : "text-gray-400",
                             "size-6 shrink-0",
                           )}
                         />
@@ -199,7 +199,7 @@ export default function Header({ children, workspaceName }) {
       {/* Main Content Area */}
       <div className="lg:pl-72">
         {/* Top Navigation Bar */}
-        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-[#f9f9f7] px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4  bg-[#fafaf7] px-4 sm:gap-x-6 sm:px-6 lg:px-8">
           {/* Mobile menu button */}
           <button
             type="button"
