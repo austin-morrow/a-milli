@@ -69,57 +69,84 @@ export async function createAccount(formData) {
 }
 
 export async function updateAccount(accountId, formData) {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
-  // Get the current user
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
   if (userError || !user) {
-    return { error: "You must be logged in to update an account" };
+    return { error: 'You must be logged in to update an account' }
   }
 
+  const { data: workspaceMember } = await supabase
+    .from('workspace_members')
+    .select('workspace_id')
+    .eq('user_id', user.id)
+    .single()
+
   // Get form data
-  const accountType = formData.get("accountType");
-  const accountSubtype = formData.get("accountSubtype");
-  const institutionName = formData.get("institutionName");
-  const nickname = formData.get("nickname");
-  const balance = formData.get("balance");
+  const accountType = formData.get('accountType')
+  const accountSubtype = formData.get('accountSubtype')
+  const institutionName = formData.get('institutionName')
+  const nickname = formData.get('nickname')
+  const balance = formData.get('balance')
 
   // Validate
   if (!accountType || !nickname) {
-    return { error: "Account type and nickname are required" };
+    return { error: 'Account type and nickname are required' }
   }
 
-  if (accountType === "banking" && (!accountSubtype || !institutionName)) {
-    return {
-      error: "Banking accounts require account type and institution name",
-    };
+  if (accountType === 'banking' && (!accountSubtype || !institutionName)) {
+    return { error: 'Banking accounts require account type and institution name' }
   }
+
+  // Get the old account data to check if balance changed
+  const { data: oldAccount } = await supabase
+    .from('accounts')
+    .select('balance')
+    .eq('id', accountId)
+    .single()
 
   // Build the update object
   const updateData = {
     account_type: accountType,
-    account_subtype: accountType === "banking" ? accountSubtype : null,
-    institution_name: accountType === "banking" ? institutionName : null,
+    account_subtype: accountType === 'banking' ? accountSubtype : null,
+    institution_name: accountType === 'banking' ? institutionName : null,
     nickname: nickname,
     balance: parseFloat(balance) || 0,
-  };
+  }
 
   // Update the account
   const { error: accountError } = await supabase
-    .from("accounts")
+    .from('accounts')
     .update(updateData)
-    .eq("id", accountId);
+    .eq('id', accountId)
 
   if (accountError) {
-    return { error: "Failed to update account: " + accountError.message };
+    return { error: 'Failed to update account: ' + accountError.message }
   }
 
-  revalidatePath("/accounts");
-  return { success: true };
+  // Create a transaction if balance changed
+  if (oldAccount && parseFloat(oldAccount.balance) !== parseFloat(balance)) {
+    const balanceDifference = parseFloat(balance) - parseFloat(oldAccount.balance)
+    const transactionType = balanceDifference > 0 ? 'income' : 'expense'
+    const transactionAmount = Math.abs(balanceDifference)
+
+    await supabase
+      .from('transactions')
+      .insert({
+        workspace_id: workspaceMember.workspace_id,
+        transaction_type: transactionType,
+        date: new Date().toISOString().split('T')[0], // Today's date
+        description: `Balance adjustment for ${nickname}`,
+        amount: transactionAmount,
+        account_id: accountId,
+        category_id: null,
+        expense_id: null,
+      })
+  }
+
+  revalidatePath('/accounts')
+  revalidatePath('/transactions')
+  return { success: true }
 }
 
 export async function deleteAccount(accountId) {
