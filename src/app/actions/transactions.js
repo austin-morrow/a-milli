@@ -34,42 +34,58 @@ const expenseId = formData.get('expenseId')
   }
 
   // Create the transaction
-  const { error: transactionError } = await supabase
-    .from('transactions')
+const { data: newTransaction, error: transactionError } = await supabase
+  .from('transactions')
+  .insert({
+    workspace_id: workspaceMember.workspace_id,
+    transaction_type: transactionType,
+    date: date,
+    description: description,
+    amount: parseFloat(amount),
+    account_id: accountId,
+    category_id: categoryId || null,
+    expense_id: expenseId || null,
+  })
+  .select('id')
+  .single()
+
+if (transactionError) {
+  return { error: 'Failed to create transaction: ' + transactionError.message }
+}
+
+// If this is an income transaction, also create a misc_income record
+if (transactionType === 'income') {
+  await supabase
+    .from('misc_income')
     .insert({
       workspace_id: workspaceMember.workspace_id,
-      transaction_type: transactionType,
+      account_id: accountId,
+      amount: parseFloat(amount),
       date: date,
       description: description,
-      amount: parseFloat(amount),
-      account_id: accountId,
-      category_id: categoryId || null,
-      expense_id: expenseId || null,
+      transaction_id: newTransaction.id,
     })
+}
 
-  if (transactionError) {
-    return { error: 'Failed to create transaction: ' + transactionError.message }
-  }
+// Update account balance
+const { data: account } = await supabase
+  .from('accounts')
+  .select('balance')
+  .eq('id', accountId)
+  .single()
 
-  // Update account balance
-  const { data: account } = await supabase
+if (account) {
+  const balanceChange = transactionType === 'income' 
+    ? parseFloat(amount) 
+    : -parseFloat(amount)
+  
+  const newBalance = parseFloat(account.balance) + balanceChange
+
+  await supabase
     .from('accounts')
-    .select('balance')
+    .update({ balance: newBalance })
     .eq('id', accountId)
-    .single()
-
-  if (account) {
-    const balanceChange = transactionType === 'income' 
-      ? parseFloat(amount) 
-      : -parseFloat(amount)
-    
-    const newBalance = parseFloat(account.balance) + balanceChange
-
-    await supabase
-      .from('accounts')
-      .update({ balance: newBalance })
-      .eq('id', accountId)
-  }
+}
 
   revalidatePath('/transactions')
   revalidatePath('/accounts')
@@ -96,76 +112,118 @@ export async function updateTransaction(transactionId, formData) {
     return { error: 'Transaction type, date, description, amount, and account are required' }
   }
 
-  // Get old transaction data
-  const { data: oldTransaction } = await supabase
-    .from('transactions')
-    .select('transaction_type, amount, account_id')
-    .eq('id', transactionId)
-    .single()
+ // Get old transaction data
+const { data: oldTransaction } = await supabase
+  .from('transactions')
+  .select('transaction_type, amount, account_id')
+  .eq('id', transactionId)
+  .single()
 
-  // Update the transaction
-  const { error: transactionError } = await supabase
-    .from('transactions')
-    .update({
-      transaction_type: transactionType,
-      date: date,
-      description: description,
-      amount: parseFloat(amount),
-      account_id: accountId,
-      category_id: categoryId || null,
-      expense_id: expenseId || null,
-    })
-    .eq('id', transactionId)
+// Check if there's a linked misc_income
+const { data: linkedIncome } = await supabase
+  .from('misc_income')
+  .select('id')
+  .eq('transaction_id', transactionId)
+  .maybeSingle()
 
-  if (transactionError) {
-    return { error: 'Failed to update transaction: ' + transactionError.message }
+// Update the transaction
+const { error: transactionError } = await supabase
+  .from('transactions')
+  .update({
+    transaction_type: transactionType,
+    date: date,
+    description: description,
+    amount: parseFloat(amount),
+    account_id: accountId,
+    category_id: categoryId || null,
+    expense_id: expenseId || null,
+  })
+  .eq('id', transactionId)
+
+if (transactionError) {
+  return { error: 'Failed to update transaction: ' + transactionError.message }
+}
+
+// Handle misc_income updates
+if (transactionType === 'income') {
+  if (linkedIncome) {
+    // Update existing misc_income
+    await supabase
+      .from('misc_income')
+      .update({
+        account_id: accountId,
+        amount: parseFloat(amount),
+        date: date,
+        description: description,
+      })
+      .eq('id', linkedIncome.id)
+  } else {
+    // Create new misc_income
+    await supabase
+      .from('misc_income')
+      .insert({
+        workspace_id: (await supabase.from('workspace_members').select('workspace_id').eq('user_id', user.id).single()).data.workspace_id,
+        account_id: accountId,
+        amount: parseFloat(amount),
+        date: date,
+        description: description,
+        transaction_id: transactionId,
+      })
   }
+} else if (linkedIncome) {
+  // If changed from income to expense, delete the misc_income
+  await supabase
+    .from('misc_income')
+    .delete()
+    .eq('id', linkedIncome.id)
+}
 
-  // Reverse old balance change
-  if (oldTransaction) {
-    const { data: oldAccount } = await supabase
-      .from('accounts')
-      .select('balance')
-      .eq('id', oldTransaction.account_id)
-      .single()
-
-    if (oldAccount) {
-      const oldBalanceChange = oldTransaction.transaction_type === 'income'
-        ? -parseFloat(oldTransaction.amount)
-        : parseFloat(oldTransaction.amount)
-      
-      const reversedBalance = parseFloat(oldAccount.balance) + oldBalanceChange
-
-      await supabase
-        .from('accounts')
-        .update({ balance: reversedBalance })
-        .eq('id', oldTransaction.account_id)
-    }
-  }
-
-  // Apply new balance change
-  const { data: account } = await supabase
+// Reverse old balance change
+if (oldTransaction) {
+  const { data: oldAccount } = await supabase
     .from('accounts')
     .select('balance')
-    .eq('id', accountId)
+    .eq('id', oldTransaction.account_id)
     .single()
 
-  if (account) {
-    const balanceChange = transactionType === 'income'
-      ? parseFloat(amount)
-      : -parseFloat(amount)
+  if (oldAccount) {
+    const oldBalanceChange = oldTransaction.transaction_type === 'income'
+      ? -parseFloat(oldTransaction.amount)
+      : parseFloat(oldTransaction.amount)
     
-    const newBalance = parseFloat(account.balance) + balanceChange
+    const reversedBalance = parseFloat(oldAccount.balance) + oldBalanceChange
 
     await supabase
       .from('accounts')
-      .update({ balance: newBalance })
-      .eq('id', accountId)
+      .update({ balance: reversedBalance })
+      .eq('id', oldTransaction.account_id)
   }
+}
 
-  revalidatePath('/transactions')
-  revalidatePath('/accounts')
-  return { success: true }
+// Apply new balance change
+const { data: account } = await supabase
+  .from('accounts')
+  .select('balance')
+  .eq('id', accountId)
+  .single()
+
+if (account) {
+  const balanceChange = transactionType === 'income'
+    ? parseFloat(amount)
+    : -parseFloat(amount)
+  
+  const newBalance = parseFloat(account.balance) + balanceChange
+
+  await supabase
+    .from('accounts')
+    .update({ balance: newBalance })
+    .eq('id', accountId)
+}
+
+revalidatePath('/transactions')
+revalidatePath('/accounts')
+revalidatePath('/income')
+return { success: true }
 }
 
 export async function deleteTransaction(transactionId) {
@@ -182,6 +240,34 @@ export async function deleteTransaction(transactionId) {
     .select('transaction_type, amount, account_id')
     .eq('id', transactionId)
     .single()
+
+  // Check if this transaction is linked to any income records
+  const { data: recurringIncome } = await supabase
+    .from('recurring_income')
+    .select('id')
+    .eq('transaction_id', transactionId)
+    .maybeSingle()
+
+  const { data: miscIncome } = await supabase
+    .from('misc_income')
+    .select('id')
+    .eq('transaction_id', transactionId)
+    .maybeSingle()
+
+  // Delete linked income first (CASCADE will handle transaction deletion)
+  if (recurringIncome) {
+    await supabase
+      .from('recurring_income')
+      .delete()
+      .eq('id', recurringIncome.id)
+  }
+
+  if (miscIncome) {
+    await supabase
+      .from('misc_income')
+      .delete()
+      .eq('id', miscIncome.id)
+  }
 
   // Delete the transaction
   const { error: transactionError } = await supabase
@@ -217,5 +303,6 @@ export async function deleteTransaction(transactionId) {
 
   revalidatePath('/transactions')
   revalidatePath('/accounts')
+  revalidatePath('/income')
   return { success: true }
 }
