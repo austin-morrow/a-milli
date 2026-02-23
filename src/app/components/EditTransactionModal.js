@@ -9,7 +9,7 @@ export default function EditTransactionModal({
   transaction,
   accounts,
   categories,
-  subcategories,
+  expenses,
 }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -40,12 +40,12 @@ export default function EditTransactionModal({
 
   if (!isOpen || !transaction) return null;
 
-  // Filter subcategories based on selected category
+  // Filter expenses based on selected category
   const selectedCategoryData = categories.find(
     (c) => c.id === selectedCategory,
   );
   const isVariableExpenses = selectedCategoryData?.name === "Variable Expenses";
-  const filteredSubcategories = subcategories.filter(
+  const filteredExpenses = expenses.filter(
     (s) => s.category_id === selectedCategory,
   );
 
@@ -207,7 +207,7 @@ export default function EditTransactionModal({
               </select>
             </div>
 
-            {isVariableExpenses && filteredSubcategories.length > 0 && (
+            {isVariableExpenses && filteredExpenses.length > 0 && (
               <div>
                 <label
                   htmlFor="subcategoryId"
@@ -222,7 +222,7 @@ export default function EditTransactionModal({
                   className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
                 >
                   <option value="">None</option>
-                  {filteredSubcategories.map((subcategory) => (
+                  {filteredExpenses.map((subcategory) => (
                     <option key={subcategory.id} value={subcategory.id}>
                       {subcategory.name}
                     </option>
