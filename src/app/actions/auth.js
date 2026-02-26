@@ -47,7 +47,7 @@ export async function signIn(formData) {
   }
 
   revalidatePath("/", "layout");
-  redirect("/budget/overview");
+  redirect("/spending/overview");
 }
 
 export async function signOut() {

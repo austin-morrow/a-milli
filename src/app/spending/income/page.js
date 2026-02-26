@@ -21,19 +21,25 @@ export default async function IncomePage() {
     .eq("user_id", user.id)
     .single();
 
-  // Fetch recurring income (paychecks)
-  const { data: recurringIncome } = await supabase
-    .from("recurring_income")
-    .select("*, accounts(nickname)")
-    .eq("workspace_id", workspaceMember.workspace_id)
-    .order("date", { ascending: true });
+// Fetch recurring income (paychecks)
+const { data: recurringIncome, error: recurringError } = await supabase
+  .from("recurring_income")
+  .select("*, accounts(nickname)")
+  .eq("workspace_id", workspaceMember.workspace_id)
+  .order("date", { ascending: true });
+
+console.log('Recurring Income Error:', recurringError)
+console.log('Recurring Income Data:', recurringIncome)
 
   // Fetch misc income
-  const { data: miscIncome } = await supabase
-    .from("misc_income")
-    .select("*, accounts(nickname)")
-    .eq("workspace_id", workspaceMember.workspace_id)
-    .order("date", { ascending: false });
+const { data: miscIncome, error: miscError } = await supabase
+  .from("misc_income")
+  .select("*, accounts(nickname)")
+  .eq("workspace_id", workspaceMember.workspace_id)
+  .order("date", { ascending: false });
+
+console.log('Misc Income Error:', miscError)
+console.log('Misc Income Data:', miscIncome)
 
   // Fetch accounts for dropdowns
   const { data: accounts } = await supabase

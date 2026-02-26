@@ -16,21 +16,20 @@ import {
 import {
   Bars3Icon,
   XMarkIcon,
-  CalculatorIcon,
   TrophyIcon,
-  BanknotesIcon,
   ChartBarIcon,
   Cog8ToothIcon,
+  BanknotesIcon,
 } from "@heroicons/react/24/outline";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { BuildingLibraryIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 
 const navigation = [
   {
-    name: "Budget",
-    href: "/budget/overview",
-    icon: CalculatorIcon,
+    name: "Spending",
+    href: "/spending/overview",
+    icon: BanknotesIcon,
   },
-  { name: "Accounts", href: "/accounts", icon: BanknotesIcon },
+  { name: "Accounts", href: "/accounts", icon: BuildingLibraryIcon },
   { name: "Insights", href: "/insights", icon: ChartBarIcon },
   { name: "Goals", href: "/goals", icon: TrophyIcon },
 ];

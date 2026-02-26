@@ -63,5 +63,5 @@ export async function createWorkspace(formData) {
   }
 
   revalidatePath("/", "layout");
-  redirect("/budget/overview");
+  redirect("/spending/overview");
 }

@@ -27,7 +27,7 @@ export async function createRecurringIncome(formData) {
   const accountId = formData.get("accountId");
   const amount = formData.get("amount");
   const date = formData.get("date");
-  const description = formData.get("description");
+  const description = formData.get("description");  
   const plannedAmount = formData.get("plannedAmount");
   const receivedAmount = formData.get("receivedAmount");
 
@@ -177,12 +177,18 @@ if (oldIncome?.received_amount) {
         .eq('id', oldIncome.account_id)
     }
 
-    // Delete old transaction
+    // Delete old transaction and clear the transaction_id
     if (oldIncome.transaction_id) {
       await supabase
         .from('transactions')
         .delete()
         .eq('id', oldIncome.transaction_id)
+      
+      // ADD THIS: Clear the transaction_id from income
+      await supabase
+        .from('recurring_income')
+        .update({ transaction_id: null })
+        .eq('id', incomeId)
     }
   }
 }
@@ -397,15 +403,22 @@ if (oldIncome) {
         .eq('id', oldIncome.account_id)
     }
 
-    // Delete old transaction
+    // Delete old transaction and clear the transaction_id
     if (oldIncome.transaction_id) {
       await supabase
         .from('transactions')
         .delete()
         .eq('id', oldIncome.transaction_id)
+      
+      // ADD THIS: Clear the transaction_id from income
+      await supabase
+        .from('misc_income')
+        .update({ transaction_id: null })
+        .eq('id', incomeId)
     }
   }
 }
+
 
 // Apply new balance and create new transaction if applicable
 const newDate = new Date(date)

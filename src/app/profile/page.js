@@ -1,44 +1,23 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
+import { useState } from "react";
 
-import { ChevronDownIcon } from '@heroicons/react/16/solid'
-
-
+import { ChevronDownIcon } from "@heroicons/react/16/solid";
 
 const secondaryNavigation = [
-  { name: 'Account', href: '#', current: true },
-  { name: 'Notifications', href: '#', current: false },
-  { name: 'Billing', href: '#', current: false },
-  { name: 'Teams', href: '#', current: false },
-  { name: 'Integrations', href: '#', current: false },
-]
+  { name: "Profile", href: "#", current: true },
+  { name: "Budgets", href: "#", current: false },
+  { name: "Notifications", href: "#", current: false },
+];
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
 
-export default function Example() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+export default function Profile() {
+
 
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
       <div>
-   
-
-     
-
         <div>
-      
-
           <main>
             <h1 className="sr-only">Account Settings</h1>
 
@@ -51,7 +30,10 @@ export default function Example() {
                 >
                   {secondaryNavigation.map((item) => (
                     <li key={item.name}>
-                      <a href={item.href} className={item.current ? 'text-indigo-600' : ''}>
+                      <a
+                        href={item.href}
+                        className={item.current ? "text-indigo-600" : ""}
+                      >
                         {item.name}
                       </a>
                     </li>
@@ -64,8 +46,12 @@ export default function Example() {
             <div className="divide-y divide-gray-200">
               <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
                 <div>
-                  <h2 className="text-base/7 font-semibold text-gray-900">Personal Information</h2>
-                  <p className="mt-1 text-sm/6 text-gray-500">Use a permanent address where you can receive mail.</p>
+                  <h2 className="text-base/7 font-semibold text-gray-900">
+                    Personal Information
+                  </h2>
+                  <p className="mt-1 text-sm/6 text-gray-500">
+                    Use a permanent address where you can receive mail.
+                  </p>
                 </div>
 
                 <form className="md:col-span-2">
@@ -83,12 +69,17 @@ export default function Example() {
                         >
                           Change avatar
                         </button>
-                        <p className="mt-2 text-xs/5 text-gray-500">JPG, GIF or PNG. 1MB max.</p>
+                        <p className="mt-2 text-xs/5 text-gray-500">
+                          JPG, GIF or PNG. 1MB max.
+                        </p>
                       </div>
                     </div>
 
                     <div className="sm:col-span-3">
-                      <label htmlFor="first-name" className="block text-sm/6 font-medium text-gray-900">
+                      <label
+                        htmlFor="first-name"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
                         First name
                       </label>
                       <div className="mt-2">
@@ -103,7 +94,10 @@ export default function Example() {
                     </div>
 
                     <div className="sm:col-span-3">
-                      <label htmlFor="last-name" className="block text-sm/6 font-medium text-gray-900">
+                      <label
+                        htmlFor="last-name"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
                         Last name
                       </label>
                       <div className="mt-2">
@@ -118,7 +112,10 @@ export default function Example() {
                     </div>
 
                     <div className="col-span-full">
-                      <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+                      <label
+                        htmlFor="email"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
                         Email address
                       </label>
                       <div className="mt-2">
@@ -133,12 +130,17 @@ export default function Example() {
                     </div>
 
                     <div className="col-span-full">
-                      <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">
+                      <label
+                        htmlFor="username"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
                         Username
                       </label>
                       <div className="mt-2">
                         <div className="flex items-center rounded-md bg-white pl-3 outline outline-1 -outline-offset-1 outline-gray-300 focus-within:outline focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600 sm:text-sm/6">
-                          <div className="shrink-0 select-none text-base text-gray-500 sm:text-sm/6">example.com/</div>
+                          <div className="shrink-0 select-none text-base text-gray-500 sm:text-sm/6">
+                            example.com/
+                          </div>
                           <input
                             id="username"
                             name="username"
@@ -151,7 +153,10 @@ export default function Example() {
                     </div>
 
                     <div className="col-span-full">
-                      <label htmlFor="timezone" className="block text-sm/6 font-medium text-gray-900">
+                      <label
+                        htmlFor="timezone"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
                         Timezone
                       </label>
                       <div className="mt-2 grid grid-cols-1">
@@ -185,14 +190,21 @@ export default function Example() {
 
               <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
                 <div>
-                  <h2 className="text-base/7 font-semibold text-gray-900">Change password</h2>
-                  <p className="mt-1 text-sm/6 text-gray-500">Update your password associated with your account.</p>
+                  <h2 className="text-base/7 font-semibold text-gray-900">
+                    Change password
+                  </h2>
+                  <p className="mt-1 text-sm/6 text-gray-500">
+                    Update your password associated with your account.
+                  </p>
                 </div>
 
                 <form className="md:col-span-2">
                   <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
                     <div className="col-span-full">
-                      <label htmlFor="current-password" className="block text-sm/6 font-medium text-gray-900">
+                      <label
+                        htmlFor="current-password"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
                         Current password
                       </label>
                       <div className="mt-2">
@@ -207,7 +219,10 @@ export default function Example() {
                     </div>
 
                     <div className="col-span-full">
-                      <label htmlFor="new-password" className="block text-sm/6 font-medium text-gray-900">
+                      <label
+                        htmlFor="new-password"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
                         New password
                       </label>
                       <div className="mt-2">
@@ -222,7 +237,10 @@ export default function Example() {
                     </div>
 
                     <div className="col-span-full">
-                      <label htmlFor="confirm-password" className="block text-sm/6 font-medium text-gray-900">
+                      <label
+                        htmlFor="confirm-password"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
                         Confirm password
                       </label>
                       <div className="mt-2">
@@ -250,17 +268,22 @@ export default function Example() {
 
               <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
                 <div>
-                  <h2 className="text-base/7 font-semibold text-gray-900">Log out other sessions</h2>
+                  <h2 className="text-base/7 font-semibold text-gray-900">
+                    Log out other sessions
+                  </h2>
                   <p className="mt-1 text-sm/6 text-gray-500">
-                    Please enter your password to confirm you would like to log out of your other sessions across all of
-                    your devices.
+                    Please enter your password to confirm you would like to log
+                    out of your other sessions across all of your devices.
                   </p>
                 </div>
 
                 <form className="md:col-span-2">
                   <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
                     <div className="col-span-full">
-                      <label htmlFor="logout-password" className="block text-sm/6 font-medium text-gray-900">
+                      <label
+                        htmlFor="logout-password"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
                         Your password
                       </label>
                       <div className="mt-2">
@@ -288,10 +311,13 @@ export default function Example() {
 
               <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
                 <div>
-                  <h2 className="text-base/7 font-semibold text-gray-900">Delete account</h2>
+                  <h2 className="text-base/7 font-semibold text-gray-900">
+                    Delete account
+                  </h2>
                   <p className="mt-1 text-sm/6 text-gray-500">
-                    No longer want to use our service? You can delete your account here. This action is not reversible.
-                    All information related to this account will be deleted permanently.
+                    No longer want to use our service? You can delete your
+                    account here. This action is not reversible. All information
+                    related to this account will be deleted permanently.
                   </p>
                 </div>
 
@@ -309,5 +335,5 @@ export default function Example() {
         </div>
       </div>
     </>
-  )
+  );
 }
