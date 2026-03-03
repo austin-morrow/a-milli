@@ -185,6 +185,31 @@ export default function EditTransactionModal({
               </select>
             </div>
 
+   <div>
+              <label
+                htmlFor="categoryId"
+                className="block text-sm font-medium text-gray-900"
+              >
+                Category (Optional)
+              </label>
+              <select
+                id="categoryId"
+                name="categoryId"
+                value={selectedCategory}
+                onChange={(e) => {
+                  setSelectedCategory(e.target.value);
+                }}
+                className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
+              >
+                <option value="">None</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+ {selectedCategory && filteredExpenses.length > 0 && (
             <div>
               <label
                 htmlFor="expenseId"
@@ -199,37 +224,16 @@ export default function EditTransactionModal({
                 className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
               >
                 <option value="">None</option>
-                {expenses.map((expense) => (
+                {filteredExpenses.map((expense) => (
                   <option key={expense.id} value={expense.id}>
                     {expense.description}
                   </option>
                 ))}
               </select>
             </div>
+ )}
 
-            {isVariableExpenses && filteredExpenses.length > 0 && (
-              <div>
-                <label
-                  htmlFor="subcategoryId"
-                  className="block text-sm font-medium text-gray-900"
-                >
-                  Subcategory
-                </label>
-                <select
-                  id="subcategoryId"
-                  name="subcategoryId"
-                  defaultValue={transaction.subcategory_id || ""}
-                  className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
-                >
-                  <option value="">None</option>
-                  {filteredExpenses.map((subcategory) => (
-                    <option key={subcategory.id} value={subcategory.id}>
-                      {subcategory.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
+            
 
             {error && (
               <div className="rounded-md bg-red-50 p-3">

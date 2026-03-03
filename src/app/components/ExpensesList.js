@@ -204,30 +204,34 @@ export default function ExpensesList({ expenses }) {
                         >
                           Description
                         </th>
-                        <th
+                         <th
                           scope="col"
                           className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                         >
-                          Amount
+                          Category
                         </th>
+
+                          <th
+                          scope="col"
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
+                          Frequency
+                        </th>
+                      
                         <th
                           scope="col"
                           className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                         >
                           Due Date
                         </th>
-                        <th
+                      
+                          <th
                           scope="col"
                           className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                         >
-                          Frequency
+                          Amount
                         </th>
-                        <th
-                          scope="col"
-                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                        >
-                          Category
-                        </th>
+                       
                         <th scope="col" className="py-3.5 pl-3 pr-4 sm:pr-6">
                           <span className="sr-only">Actions</span>
                         </th>
@@ -239,19 +243,7 @@ export default function ExpensesList({ expenses }) {
                           <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                             {expense.description}
                           </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {formatCurrency(expense.amount)}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {formatDueDate(expense)}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold text-green-800">
-                              {expense.recurrence_type.charAt(0).toUpperCase() +
-                                expense.recurrence_type.slice(1)}
-                            </span>
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {expense.categories ? (
                               <span
                                 className="inline-flex rounded-full px-2 text-xs font-semibold"
@@ -268,8 +260,23 @@ export default function ExpensesList({ expenses }) {
                               </span>
                             )}
                           </td>
+                          
+                         
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold text-green-800">
+                              {expense.recurrence_type.charAt(0).toUpperCase() +
+                                expense.recurrence_type.slice(1)}
+                            </span>
+                          </td>
+                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {formatDueDate(expense)}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {formatCurrency(expense.amount)}
+                          </td>
+                      
 
-                          <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                          <td className="whitespace-nowrap py-4 pl-3 pr-4 text-sm font-medium sm:pr-6">
                             <button
                               onClick={() => handleEditClick(expense)}
                               className="text-[#00bf63] hover:text-[#33d98a] mr-4"

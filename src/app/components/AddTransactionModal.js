@@ -111,6 +111,23 @@ export default function AddTransactionModal({
 
              <div>
               <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-900"
+              >
+                Description
+              </label>
+              <input
+                type="text"
+                id="description"
+                name="description"
+                required
+                placeholder="e.g., Grocery shopping"
+                className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
+              />
+            </div>
+
+             <div>
+              <label
                 htmlFor="amount"
                 className="block text-sm font-medium text-gray-900"
               >
@@ -211,23 +228,6 @@ export default function AddTransactionModal({
               </div>
             )}
           </div>
-
-           <div>
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium text-gray-900"
-              >
-                Description
-              </label>
-              <input
-                type="text"
-                id="description"
-                name="description"
-                required
-                placeholder="e.g., Grocery shopping"
-                className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
-              />
-            </div>
 
           <div className="mt-6 flex gap-3">
             <button
