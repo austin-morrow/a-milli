@@ -26,7 +26,7 @@ import { BuildingLibraryIcon, ChevronDownIcon } from "@heroicons/react/20/solid"
 const navigation = [
   {
     name: "Spending",
-    href: "/spending/overview",
+    href: "/spending",
     icon: BanknotesIcon,
   },
   { name: "Accounts", href: "/accounts", icon: BuildingLibraryIcon },

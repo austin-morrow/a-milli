@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import TransactionsList from '@/app/components/TransactionsList'
+import SpendingTracker from '@/app/components/SpendingTracker'
 
 export default async function TransactionsPage() {
   const supabase = await createClient()
@@ -47,6 +48,7 @@ const { data: expenses } = await supabase
   .order('description')
 
   return (
+    <SpendingTracker>
     <div className="min-h-screen bg-white border border-gray-200 rounded-2xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
      <TransactionsList 
@@ -57,5 +59,6 @@ const { data: expenses } = await supabase
 />
       </div>
     </div>
+    </SpendingTracker>
   )
 }

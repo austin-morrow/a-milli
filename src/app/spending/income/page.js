@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import IncomeLayout from "@/app/components/IncomeLayout";
+import SpendingTracker from "@/app/components/SpendingTracker";
 
 export default async function IncomePage() {
   const supabase = await createClient();
@@ -49,6 +50,7 @@ console.log('Misc Income Data:', miscIncome)
     .order("nickname");
 
   return (
+    <SpendingTracker>
     <div className="min-h-screen bg-white border border-gray-200 rounded-2xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <IncomeLayout
@@ -58,5 +60,6 @@ console.log('Misc Income Data:', miscIncome)
         />
       </div>
     </div>
+    </SpendingTracker>
   );
 }
