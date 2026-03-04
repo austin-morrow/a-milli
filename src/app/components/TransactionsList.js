@@ -118,20 +118,20 @@ export default function TransactionsList({
                   <table className="relative min-w-full divide-y divide-gray-300">
                     <thead className="bg-gray-50">
                       <tr>
-                         <th
+                        <th
                           scope="col"
                           className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                         >
                           Description
                         </th>
-                          <th
+                        <th
                           scope="col"
                           className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                         >
                           Category
                         </th>
 
-                          <th
+                        <th
                           scope="col"
                           className="px-3 py-3.5 text-sm text-left font-semibold text-gray-900"
                         >
@@ -144,8 +144,7 @@ export default function TransactionsList({
                           Date
                         </th>
 
-                      
-                          <th
+                        <th
                           scope="col"
                           className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                         >
@@ -160,10 +159,10 @@ export default function TransactionsList({
                     <tbody className="divide-y divide-gray-200 bg-white">
                       {transactions.map((transaction) => (
                         <tr key={transaction.id}>
-                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {transaction.description}
                           </td>
-                                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {transaction.categories ? (
                               <div className="flex flex-col gap-1">
                                 <span
@@ -188,7 +187,7 @@ export default function TransactionsList({
                             )}
                           </td>
 
-                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {transaction.accounts?.nickname}
                           </td>
                           <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
@@ -209,9 +208,6 @@ export default function TransactionsList({
                               {formatCurrency(transaction.amount)}
                             </span>
                           </td>
-                 
-                         
-                          
 
                           <td className="whitespace-nowrap py-4 pl-3 pr-4 text-sm font-medium sm:pr-6">
                             <button
