@@ -21,12 +21,13 @@ export default async function BudgetPage() {
     .eq('user_id', user.id)
     .single()
 
-  // Fetch budgets
-  const { data: budgets } = await supabase
-    .from('budgets')
-    .select('*')
-    .eq('workspace_id', workspaceMember.workspace_id)
-    .order('month', { ascending: false })
+  
+    // Fetch budgets with pay periods
+const { data: budgets } = await supabase
+  .from('budgets')
+  .select('*, budget_pay_periods(*)')
+  .eq('workspace_id', workspaceMember.workspace_id)
+  .order('month', { ascending: false })
 
   return (
       <SpendingTracker>

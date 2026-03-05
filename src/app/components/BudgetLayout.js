@@ -7,6 +7,7 @@ import {
   ChevronDownIcon,
 } from "@heroicons/react/20/solid";
 import ConfirmBudgetModal from "@/app/components/ConfirmBudgetModal";
+import PayPeriodsList from '@/app/components/PayPeriodsList'
 
 export default function BudgetLayout({ budgets }) {
   const [selectedMonth, setSelectedMonth] = useState(null);
@@ -161,40 +162,49 @@ export default function BudgetLayout({ budgets }) {
       </div>
 
       {/* Budget Content */}
-      {selectedBudget ? (
-        <div className="bg-gray-50 rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            {selectedBudget.name}
-          </h2>
-          <p className="text-sm text-gray-500">
-            Budget content will go here (pay periods, expenses, etc.)
-          </p>
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <svg
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            className="mx-auto size-12 text-gray-400"
-          >
-            <path
-              d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-              strokeWidth={2}
-              vectorEffect="non-scaling-stroke"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <h3 className="mt-2 text-sm font-semibold text-gray-900">
-            No budget selected
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Click the month above to get started.
-          </p>
-        </div>
-      )}
+{selectedBudget ? (
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    {/* Left side - Main content (will show expenses later) */}
+    <div className="lg:col-span-2">
+      <div className="bg-gray-50 rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Expenses & Bills
+        </h2>
+        <p className="text-sm text-gray-500">
+          Expense tracking will go here
+        </p>
+      </div>
+    </div>
+
+    {/* Right side - Pay Dates */}
+    <div className="lg:col-span-1">
+      <PayPeriodsList 
+        budgetId={selectedBudget.id}
+        payPeriods={selectedBudget.budget_pay_periods || []}
+      />
+    </div>
+  </div>
+) : (
+  <div className="text-center py-12">
+    <svg
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="mx-auto size-12 text-gray-400"
+    >
+      <path
+        d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+        strokeWidth={2}
+        vectorEffect="non-scaling-stroke"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+    <h3 className="mt-2 text-sm font-semibold text-gray-900">No budget selected</h3>
+    <p className="mt-1 text-sm text-gray-500">Click the month above to get started.</p>
+  </div>
+)}
 
       <ConfirmBudgetModal
         isOpen={isConfirmModalOpen}
