@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { PlusIcon } from '@heroicons/react/20/solid'
-//import AddPayPeriodModal from '@/app/components/AddPayPeriodModal'
-//import EditPayPeriodModal from '@/app/components/EditPayPeriodModal'
-//import DeletePayPeriodModal from '@/app/components/DeletePayPeriodModal'
+import AddPayPeriodModal from '@/app/components/AddPayPeriodModal'
+import EditPayPeriodModal from '@/app/components/EditPayPeriodModal'
+import DeletePayPeriodModal from '@/app/components/DeletePayPeriodModal'
 
 export default function PayPeriodsList({ budgetId, payPeriods }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -97,7 +97,7 @@ export default function PayPeriodsList({ budgetId, payPeriods }) {
         </div>
       </div>
 
-      {/* <AddPayPeriodModal
+      <AddPayPeriodModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         budgetId={budgetId}
@@ -119,7 +119,7 @@ export default function PayPeriodsList({ budgetId, payPeriods }) {
           setSelectedPeriod(null)
         }}
         period={selectedPeriod}
-      /> */}
+      />
     </>
   )
 }
