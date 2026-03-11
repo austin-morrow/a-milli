@@ -1,65 +1,49 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-import IncomeLayout from "@/app/components/IncomeLayout";
-import SpendingTracker from "@/app/components/SpendingTracker";
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import IncomeLayout from '@/app/components/IncomeLayout'
+import SpendingTracker from '@/app/components/SpendingTracker'
 
 export default async function IncomePage() {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   // Get current user
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect("/login");
+    redirect('/login')
   }
 
   // Get user's workspace
   const { data: workspaceMember } = await supabase
-    .from("workspace_members")
-    .select("workspace_id")
-    .eq("user_id", user.id)
-    .single();
+    .from('workspace_members')
+    .select('workspace_id')
+    .eq('user_id', user.id)
+    .single()
 
-// Fetch recurring income (paychecks)
-const { data: recurringIncome, error: recurringError } = await supabase
-  .from("recurring_income")
-  .select("*, accounts(nickname)")
-  .eq("workspace_id", workspaceMember.workspace_id)
-  .order("date", { ascending: true });
-
-console.log('Recurring Income Error:', recurringError)
-console.log('Recurring Income Data:', recurringIncome)
-
-  // Fetch misc income
-const { data: miscIncome, error: miscError } = await supabase
-  .from("misc_income")
-  .select("*, accounts(nickname)")
-  .eq("workspace_id", workspaceMember.workspace_id)
-  .order("date", { ascending: false });
-
-console.log('Misc Income Error:', miscError)
-console.log('Misc Income Data:', miscIncome)
+  // Fetch all income
+  const { data: income } = await supabase
+    .from('income')
+    .select('*, accounts(nickname)')
+    .eq('workspace_id', workspaceMember.workspace_id)
+    .order('date', { ascending: false })
 
   // Fetch accounts for dropdowns
   const { data: accounts } = await supabase
-    .from("accounts")
-    .select("*")
-    .eq("workspace_id", workspaceMember.workspace_id)
-    .order("nickname");
+    .from('accounts')
+    .select('*')
+    .eq('workspace_id', workspaceMember.workspace_id)
+    .order('nickname')
 
   return (
     <SpendingTracker>
-    <div className="min-h-screen bg-white border border-gray-200 rounded-2xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <IncomeLayout
-          recurringIncome={recurringIncome || []}
-          miscIncome={miscIncome || []}
-          accounts={accounts || []}
-        />
+      <div className="min-h-screen bg-white border border-gray-200 rounded-2xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <IncomeLayout 
+            income={income || []}
+            accounts={accounts || []}
+          />
+        </div>
       </div>
-    </div>
     </SpendingTracker>
-  );
+  )
 }
