@@ -1,14 +1,22 @@
 'use client'
 
-import { useState } from 'react'
-import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
+import { useState, useEffect, useLayoutEffect } from 'react'
+import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, CalendarIcon, Squares2X2Icon } from '@heroicons/react/24/outline'
+import { useRouter, usePathname } from 'next/navigation'
 import ConfirmBudgetModal from '@/app/components/ConfirmBudgetModal'
+import BudgetCalendarView from '@/app/components/BudgetCalendarView'
+import BudgetListView from '@/app/components/BudgetListView'
 
 export default function BudgetLayout({ budgets, selectedBudget, setSelectedBudget }) {
+  const router = useRouter()
+  const pathname = usePathname()
   const [selectedMonth, setSelectedMonth] = useState(null)
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
   const [monthOffset, setMonthOffset] = useState(0)
   const [isMonthSelectorOpen, setIsMonthSelectorOpen] = useState(false)
+
+  // Determine current view
+  const isCalendarView = pathname.includes('/calendar')
 
   // Generate 6 months starting from monthOffset
   const generateMonths = () => {
@@ -68,7 +76,7 @@ export default function BudgetLayout({ budgets, selectedBudget, setSelectedBudge
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-6">
-      {/* Header with Month/Year */}
+      {/* Header with Month/Year and View Toggle */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
           <button
@@ -84,6 +92,32 @@ export default function BudgetLayout({ budgets, selectedBudget, setSelectedBudge
               }`}
             />
           </button>
+
+          {/* View Toggle */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.push('/spending/budget')}
+              className={`p-2 rounded-lg transition-colors ${
+                !isCalendarView 
+                  ? 'bg-[#00bf63] text-white' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+              title="List View"
+            >
+              <Squares2X2Icon className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => router.push('/spending/budget/calendar')}
+              className={`p-2 rounded-lg transition-colors ${
+                isCalendarView 
+                  ? 'bg-[#00bf63] text-white' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+              title="Calendar View"
+            >
+              <CalendarIcon className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         {/* Collapsible Month Selector */}
@@ -132,42 +166,31 @@ export default function BudgetLayout({ budgets, selectedBudget, setSelectedBudge
           </div>
         )}
       </div>
-
-      {/* Budget Content */}
-      {selectedBudget ? (
-        <div className="bg-gray-50 rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Expenses & Bills
-          </h2>
-          <p className="text-sm text-gray-500">
-            Expense tracking will go here
-          </p>
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <svg
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            className="mx-auto size-12 text-gray-400"
-          >
-            <path
-              d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-              strokeWidth={2}
-              vectorEffect="non-scaling-stroke"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <h3 className="mt-2 text-sm font-semibold text-gray-900">
-            No budget selected
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Click the month above to get started.
-          </p>
-        </div>
-      )}
+{selectedBudget ? (
+  isCalendarView 
+    ? <BudgetCalendarView budget={selectedBudget} /> 
+    : <BudgetListView budget={selectedBudget} />
+) : (
+  <div className="text-center py-12">
+    <svg
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="mx-auto size-12 text-gray-400"
+    >
+      <path
+        d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+        strokeWidth={2}
+        vectorEffect="non-scaling-stroke"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+    <h3 className="mt-2 text-sm font-semibold text-gray-900">No budget selected</h3>
+    <p className="mt-1 text-sm text-gray-500">Click the month above to get started.</p>
+  </div>
+)}
 
       <ConfirmBudgetModal
         isOpen={isConfirmModalOpen}
