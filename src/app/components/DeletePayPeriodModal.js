@@ -2,10 +2,12 @@
 
 import { deletePayPeriod } from '@/app/actions/payPeriods'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function DeletePayPeriodModal({ isOpen, onClose, period }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const router = useRouter()
 
   async function handleDelete() {
     setLoading(true)
@@ -18,6 +20,7 @@ export default function DeletePayPeriodModal({ isOpen, onClose, period }) {
       setLoading(false)
     } else {
       setLoading(false)
+      router.refresh() // Force page refresh
       onClose()
     }
   }

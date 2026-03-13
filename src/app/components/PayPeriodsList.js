@@ -12,12 +12,16 @@ export default function PayPeriodsList({ budgetId, payPeriods }) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedPeriod, setSelectedPeriod] = useState(null)
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-    })
-  }
+const formatDate = (dateString) => {
+  // Parse in local timezone to avoid UTC shift
+  const [year, month, day] = dateString.split('-').map(Number)
+  const date = new Date(year, month - 1, day)
+  
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  })
+}
 
   const handleEdit = (period) => {
     setSelectedPeriod(period)
@@ -39,7 +43,7 @@ export default function PayPeriodsList({ budgetId, payPeriods }) {
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         {/* Header */}
         <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-900">Pay Dates</h3>
+          <h3 className="text-sm font-semibold text-gray-900">Budget Periods</h3>
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="inline-flex items-center gap-1 text-xs font-medium text-[#00bf63] hover:text-[#33d98a]"

@@ -39,6 +39,7 @@ export async function createPayPeriod(formData) {
   }
 
   revalidatePath('/spending/budget')
+  revalidatePath('/spending') // Also revalidate parent
   return { success: true }
 }
 
@@ -77,6 +78,7 @@ export async function updatePayPeriod(periodId, formData) {
   }
 
   revalidatePath('/spending/budget')
+  revalidatePath('/spending')
   return { success: true }
 }
 
@@ -98,5 +100,6 @@ export async function deletePayPeriod(periodId) {
   }
 
   revalidatePath('/spending/budget')
+  revalidatePath('/spending')
   return { success: true }
 }

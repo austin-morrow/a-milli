@@ -2,10 +2,12 @@
 
 import { updatePayPeriod } from '@/app/actions/payPeriods'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function EditPayPeriodModal({ isOpen, onClose, period }) {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -20,6 +22,7 @@ export default function EditPayPeriodModal({ isOpen, onClose, period }) {
       setLoading(false)
     } else {
       setLoading(false)
+      router.refresh() // Force page refresh
       onClose()
     }
   }
