@@ -26,11 +26,21 @@ export default async function BudgetCalendarPage() {
     .eq("workspace_id", workspaceMember.workspace_id)
     .order("month", { ascending: false });
 
+  // Fetch expenses with categories
+  const { data: expenses } = await supabase
+    .from("expenses")
+    .select("*, categories(name, color)")
+    .eq("workspace_id", workspaceMember.workspace_id)
+    .order("day_of_month", { ascending: true });
+
   return (
     <SpendingTracker>
       <div className="min-h-screen bg-gray-50">
         <div className="w-full px-4 sm:px-6 lg:px-8">
-          <BudgetPageClient budgets={budgets || []} />
+          <BudgetPageClient 
+            budgets={budgets || []} 
+            expenses={expenses || []}
+          />
         </div>
       </div>
     </SpendingTracker>
