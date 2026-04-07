@@ -29,7 +29,7 @@ export default function BudgetCalendarView({ selectedBudget, expenses = [] }) {
     // Get the day of week for first day (0 = Sunday, 1 = Monday, etc.)
     let firstDayOfWeek = firstDay.getDay()
     // Convert to Monday = 0, Sunday = 6
-    firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1
+ 
     
     // Days from previous month
     const prevMonthDays = firstDayOfWeek
@@ -110,14 +110,15 @@ export default function BudgetCalendarView({ selectedBudget, expenses = [] }) {
       <div className="lg:flex lg:h-full lg:flex-col">
         <header className="flex items-center justify-between border-b border-gray-200 pb-4 mb-4">
           <h1 className="text-base font-semibold text-gray-900">
-            <time dateTime={selectedBudget.month}>
-              {budgetDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-            </time>
           </h1>
         </header>
 
         <div className="shadow ring-1 ring-black/5 lg:flex lg:flex-auto lg:flex-col">
           <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs/6 font-semibold text-gray-700 lg:flex-none">
+               <div className="flex justify-center bg-white py-2">
+              <span>S</span>
+              <span className="sr-only sm:not-sr-only">un</span>
+            </div>
             <div className="flex justify-center bg-white py-2">
               <span>M</span>
               <span className="sr-only sm:not-sr-only">on</span>
@@ -142,10 +143,7 @@ export default function BudgetCalendarView({ selectedBudget, expenses = [] }) {
               <span>S</span>
               <span className="sr-only sm:not-sr-only">at</span>
             </div>
-            <div className="flex justify-center bg-white py-2">
-              <span>S</span>
-              <span className="sr-only sm:not-sr-only">un</span>
-            </div>
+         
           </div>
 
           <div className="flex bg-gray-200 text-xs/6 text-gray-700 lg:flex-auto">
