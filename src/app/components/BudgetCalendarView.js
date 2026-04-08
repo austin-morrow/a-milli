@@ -54,28 +54,39 @@ export default function BudgetCalendarView({ selectedBudget, expenses = [] }) {
     }
     
     // Current month days
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month - 1, day)
-      const dateStr = date.toISOString().split('T')[0]
-      
-      // Find expenses for this day
-      const dayExpenses = expenses.filter(exp => exp.date === dateStr)
-      
-      days.push({
-        date: dateStr,
-        isCurrentMonth: true,
-        isToday: date.getTime() === today.getTime(),
-        events: dayExpenses.map(exp => ({
-          id: exp.id,
-          name: exp.description || 'Expense',
-          amount: exp.amount,
-          category: exp.categories?.name,
-        })),
-      })
+const today = new Date()
+today.setHours(0, 0, 0, 0)
+
+for (let day = 1; day <= daysInMonth; day++) {
+  const date = new Date(year, month - 1, day)
+  const dateStr = date.toISOString().split('T')[0]
+  
+  // Find expenses for this day of the month
+  const dayExpenses = expenses.filter(exp => {
+    // Match by day_of_month for recurring expenses
+    if (exp.day_of_month === day) {
+      return true
     }
+    // Also match by exact date if expense has a specific date
+    if (exp.date === dateStr) {
+      return true
+    }
+    return false
+  })
+  
+  days.push({
+    date: dateStr,
+    isCurrentMonth: true,
+    isToday: date.getTime() === today.getTime(),
+    events: dayExpenses.map(exp => ({
+      id: exp.id,
+      name: exp.description || 'Expense',
+      amount: exp.amount,
+      category: exp.categories?.name,
+      color: exp.categories?.color,
+    })),
+  })
+}
     
     // Next month days
     const nextMonth = new Date(year, month, 1)

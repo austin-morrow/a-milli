@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, CalendarIcon, ChartBarIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, CalendarIcon, Squares2X2Icon } from '@heroicons/react/24/outline'
 import { useRouter, usePathname } from 'next/navigation'
 import ConfirmBudgetModal from '@/app/components/ConfirmBudgetModal'
 import BudgetCalendarView from '@/app/components/BudgetCalendarView'
@@ -109,7 +109,7 @@ export default function BudgetLayout({ budgets, selectedBudget, setSelectedBudge
               }`}
               title="List View"
             >
-              <ChartBarIcon className="h-5 w-5" />
+              <Squares2X2Icon className="h-5 w-5" />
             </button>
             <button
               onClick={() => router.push('/spending/budget/calendar')}
