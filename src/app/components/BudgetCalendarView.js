@@ -53,24 +53,42 @@ export default function BudgetCalendarView({ selectedBudget, expenses = [] }) {
       })
     }
     
-    // Current month days
+  // Current month days
 const today = new Date()
 today.setHours(0, 0, 0, 0)
 
 for (let day = 1; day <= daysInMonth; day++) {
   const date = new Date(year, month - 1, day)
   const dateStr = date.toISOString().split('T')[0]
+  const dayOfWeek = date.getDay() // 0 = Sunday, 1 = Monday, etc.
   
-  // Find expenses for this day of the month
+  // Find expenses for this day
   const dayExpenses = expenses.filter(exp => {
-    // Match by day_of_month for recurring expenses
-    if (exp.day_of_month === day) {
+    // Monthly recurring: Match by day_of_month
+    if (exp.recurrence_type === 'monthly' && exp.day_of_month === day) {
       return true
     }
+    
+    // Weekly recurring: Match by day of week
+    if (exp.recurrence_type === 'weekly' && exp.weekly_days) {
+      // weekly_days is a JSON array like [0, 3] for Sunday and Wednesday
+      const weeklyDays = typeof exp.weekly_days === 'string' 
+        ? JSON.parse(exp.weekly_days) 
+        : exp.weekly_days
+      return weeklyDays.includes(dayOfWeek)
+    }
+    
+    // Yearly recurring: Match by exact date
+    if (exp.recurrence_type === 'yearly' && exp.yearly_date) {
+      const yearlyDate = new Date(exp.yearly_date)
+      return yearlyDate.getMonth() === month - 1 && yearlyDate.getDate() === day
+    }
+    
     // Also match by exact date if expense has a specific date
     if (exp.date === dateStr) {
       return true
     }
+    
     return false
   })
   
@@ -78,13 +96,15 @@ for (let day = 1; day <= daysInMonth; day++) {
     date: dateStr,
     isCurrentMonth: true,
     isToday: date.getTime() === today.getTime(),
-    events: dayExpenses.map(exp => ({
-      id: exp.id,
-      name: exp.description || 'Expense',
-      amount: exp.amount,
-      category: exp.categories?.name,
-      color: exp.categories?.color,
-    })),
+events: dayExpenses.map((exp, index) => ({
+  id: `${exp.id}-${dateStr}`, // Make unique by combining expense ID with date
+  expenseId: exp.id, // Keep original ID for reference
+  name: exp.description || 'Expense',
+  amount: exp.amount,
+  category: exp.categories?.name,
+  color: exp.categories?.color,
+  recurrence: exp.recurrence_type,
+})),
   })
 }
     
