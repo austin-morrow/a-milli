@@ -229,18 +229,7 @@ export default function BudgetLayout({
                               );
 
                             // If no current period, find the next upcoming one
-                            const upcomingPeriod =
-                              currentPeriod ||
-                              selectedBudget.budget_pay_periods
-                                .filter(
-                                  (period) =>
-                                    new Date(period.start_date) > today,
-                                )
-                                .sort(
-                                  (a, b) =>
-                                    new Date(a.start_date) -
-                                    new Date(b.start_date),
-                                )[0];
+                          const upcomingPeriod = selectedBudget.budget_pay_periods[0];
 
                             if (!upcomingPeriod) {
                               return (
@@ -323,36 +312,19 @@ export default function BudgetLayout({
                                     {upcomingBills.map((bill) => (
                                       <div
                                         key={bill.id}
-                                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                                        className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                                       >
-                                        <div className="flex-1 min-w-0">
-                                          <p className="text-sm font-medium text-gray-900 truncate">
-                                            {bill.description}
-                                          </p>
-                                          <div className="flex items-center gap-2 mt-1">
-                                            {bill.categories && (
-                                              <span
-                                                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
-                                                style={{
-                                                  backgroundColor: `${bill.categories.color}20`,
-                                                  color: bill.categories.color,
-                                                }}
-                                              >
-                                                {bill.categories.name}
-                                              </span>
-                                            )}
-                                            {bill.day_of_month && (
-                                              <span className="text-xs text-gray-500">
-                                                Due: {bill.day_of_month}th
-                                              </span>
-                                            )}
-                                          </div>
-                                        </div>
-                                        <div className="ml-4 flex-shrink-0">
-                                          <p className="text-sm font-semibold text-gray-900">
-                                            {formatCurrency(bill.amount)}
-                                          </p>
-                                        </div>
+                                        <p className="text-sm font-medium text-gray-900 truncate flex-1">
+                                          {bill.description}
+                                        </p>
+                                        {bill.day_of_month && (
+                                          <span className="text-xs text-gray-500 flex-shrink-0">
+                                            Due {bill.day_of_month}th
+                                          </span>
+                                        )}
+                                        <p className="text-sm font-semibold text-gray-900 flex-shrink-0">
+                                          {formatCurrency(bill.amount)}
+                                        </p>
                                       </div>
                                     ))}
 
