@@ -79,56 +79,40 @@ export default function ExpensesList({ expenses }) {
 
   const [filter, setFilter] = useState("all");
 
-const filteredExpenses = expenses.filter((expense) => {
-  if (filter === "bills") return expense.categories?.name === "Bills";
-  if (filter === "variable") return expense.categories?.name === "Variable Expenses";
-  return true; 
-});
+  const filteredExpenses = expenses.filter((expense) => {
+    if (filter === "bills") return expense.categories?.name === "Bills";
+    if (filter === "variable")
+      return expense.categories?.name === "Variable Expenses";
+    return true;
+  });
 
   // Calculate totals from expenses
-  const calculateTotals = () => {
-    const totalAmount = expenses.reduce(
-      (sum, expense) => sum + parseFloat(expense.amount),
-      0,
-    );
+const calculateTotals = () => {
+  const totalAmount = expenses.reduce(
+    (sum, e) => sum + parseFloat(e.amount), 0
+  );
 
-    // Group by category and calculate totals
-    const categoryTotals = expenses.reduce((acc, expense) => {
-      const categoryName = expense.categories?.name || "Uncategorized";
-      if (!acc[categoryName]) {
-        acc[categoryName] = 0;
-      }
-      acc[categoryName] += parseFloat(expense.amount);
-      return acc;
-    }, {});
+  const billsTotal = expenses
+    .filter((e) => e.categories?.name === "Bills")
+    .reduce((sum, e) => sum + parseFloat(e.amount), 0);
 
-    // Get top 2 categories by amount
-    const sortedCategories = Object.entries(categoryTotals)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 2);
+  const variableTotal = expenses
+    .filter((e) => e.categories?.name === "Variable Expenses")
+    .reduce((sum, e) => sum + parseFloat(e.amount), 0);
 
-    return {
-      total: totalAmount,
-      topCategories: sortedCategories,
-    };
-  };
+  return { totalAmount, billsTotal, variableTotal };
+};
 
-  const { total, topCategories } = calculateTotals();
+const { totalAmount, billsTotal, variableTotal } = calculateTotals();
 
-  const totals = [
-    {
-      name: "Total Monthly Expenses",
-      stat: formatCurrency(total),
-    },
-    {
-      name: topCategories[0]?.[0] || "No Categories",
-      stat: topCategories[0] ? formatCurrency(topCategories[0][1]) : "$0.00",
-    },
-    {
-      name: topCategories[1]?.[0] || "Other",
-      stat: topCategories[1] ? formatCurrency(topCategories[1][1]) : "$0.00",
-    },
-  ];
+const totals = [
+  { name: "Total Monthly Expenses", stat: formatCurrency(totalAmount) },
+  { name: "Total Bills", stat: formatCurrency(billsTotal) },
+  { name: "Total Variable Expenses", stat: formatCurrency(variableTotal) },
+];
+
+  const [expenseType, setExpenseType] = useState(null);
+
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
@@ -165,6 +149,7 @@ const filteredExpenses = expenses.filter((expense) => {
               <div className="absolute right-0 mt-1 w-44 rounded-md bg-white shadow-lg ring-1 ring-black/10 z-10">
                 <button
                   onClick={() => {
+                    setExpenseType("bills");
                     setIsModalOpen(true);
                     setIsDropdownOpen(false);
                   }}
@@ -174,7 +159,8 @@ const filteredExpenses = expenses.filter((expense) => {
                 </button>
                 <button
                   onClick={() => {
-                    // setIsVariableModalOpen(true); // wire up later
+                    setExpenseType("variable");
+                    setIsModalOpen(true);
                     setIsDropdownOpen(false);
                   }}
                   className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-b-md"
@@ -364,7 +350,11 @@ const filteredExpenses = expenses.filter((expense) => {
 
       <AddExpenseModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setExpenseType(null);
+        }}
+        expenseType={expenseType}
       />
 
       <EditExpenseModal

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-export default function AddExpenseModal({ isOpen, onClose }) {
+export default function AddExpenseModal({ isOpen, onClose, expenseType }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [recurrenceType, setRecurrenceType] = useState("monthly");
@@ -74,23 +74,32 @@ export default function AddExpenseModal({ isOpen, onClose }) {
   const [categories, setCategories] = useState([]);
 
   // Fetch categories when modal opens
-  useEffect(() => {
-    async function fetchCategories() {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from("categories")
-        .select("*")
-        .order("name");
+ useEffect(() => {
+  async function fetchCategories() {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("categories")
+      .select("*")
+      .order("name");
 
-      if (data) {
-        setCategories(data);
+    if (data) {
+      setCategories(data);
+
+      // Auto-select category based on expenseType
+      if (expenseType === "bills") {
+        const billsCat = data.find((c) => c.name === "Bills");
+        if (billsCat) setSelectedCategory(billsCat.id);
+      } else if (expenseType === "variable") {
+        const variableCat = data.find((c) => c.name === "Variable Expenses");
+        if (variableCat) setSelectedCategory(variableCat.id);
       }
     }
+  }
 
-    if (isOpen) {
-      fetchCategories();
-    }
-  }, [isOpen]);
+  if (isOpen) {
+    fetchCategories();
+  }
+}, [isOpen, expenseType]);
 
   if (!isOpen) return null;
 
@@ -102,8 +111,13 @@ export default function AddExpenseModal({ isOpen, onClose }) {
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="px-6 py-4 border-b border-gray-200 sticky top-0 bg-white">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">Add New Expense</h2>
-            <button
+<h2 className="text-xl font-bold text-gray-900">
+  {expenseType === "bills"
+    ? "Add New Bill"
+    : expenseType === "variable"
+    ? "Add New Variable Expense"
+    : "Add New Expense"}
+</h2>            <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600"
             >
@@ -264,28 +278,7 @@ export default function AddExpenseModal({ isOpen, onClose }) {
               </div>
             )}
 
-            <div>
-              <label
-                htmlFor="category"
-                className="block text-sm font-medium text-gray-900"
-              >
-                Category
-              </label>
-              <select
-                id="category"
-                name="categoryId"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="mt-1 block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-[#00bf63]"
-              >
-                <option value="">None</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+    <input type="hidden" name="categoryId" value={selectedCategory} />
 
             {error && (
               <div className="rounded-md bg-red-50 p-3">
