@@ -1,15 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import AddExpenseModal from "@/app/components/AddExpenseModal";
 import EditExpenseModal from "@/app/components/EditExpenseModal";
 import DeleteExpenseModal from "@/app/components/DeleteExpenseModal";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 export default function ExpensesList({ expenses }) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
+
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Format currency
   const formatCurrency = (amount) => {
@@ -63,6 +77,14 @@ export default function ExpensesList({ expenses }) {
     return "N/A";
   };
 
+  const [filter, setFilter] = useState("all");
+
+const filteredExpenses = expenses.filter((expense) => {
+  if (filter === "bills") return expense.categories?.name === "Bills";
+  if (filter === "variable") return expense.categories?.name === "Variable Expenses";
+  return true; 
+});
+
   // Calculate totals from expenses
   const calculateTotals = () => {
     const totalAmount = expenses.reduce(
@@ -113,19 +135,54 @@ export default function ExpensesList({ expenses }) {
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
             <h1 className="text-base font-semibold text-gray-900">Expenses</h1>
-            <p className="mt-2 text-sm text-gray-700">
-              A list of all your recurring expenses including amount, due date,
-              and frequency.
-            </p>
+
+            <div className="mt-2 flex items-center gap-2">
+              <select
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00bf63]"
+              >
+                <option value="all">All</option>
+                <option value="bills">Bills</option>
+                <option value="variable">Variable Expenses</option>
+              </select>
+            </div>
           </div>
-          <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+          <div
+            ref={dropdownRef}
+            className="mt-4 sm:ml-16 sm:mt-4 sm:flex-none relative"
+          >
             <button
               type="button"
-              onClick={() => setIsModalOpen(true)}
-              className="block rounded-md bg-[#00bf63] px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-[#33d98a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00bf63]"
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+              className="flex items-center gap-1 rounded-md bg-[#00bf63] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#33d98a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00bf63]"
             >
-              Add Expense
+              <PlusIcon className="h-5 w-5" />
+              Add
             </button>
+
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-1 w-44 rounded-md bg-white shadow-lg ring-1 ring-black/10 z-10">
+                <button
+                  onClick={() => {
+                    setIsModalOpen(true);
+                    setIsDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-md"
+                >
+                  Bill
+                </button>
+                <button
+                  onClick={() => {
+                    // setIsVariableModalOpen(true); // wire up later
+                    setIsDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-b-md"
+                >
+                  Variable Expense
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -147,7 +204,7 @@ export default function ExpensesList({ expenses }) {
           </dl>
         </div>
 
-        {expenses.length === 0 ? (
+        {filteredExpenses.length === 0 ? (
           <div className="mt-8 text-center bg-white shadow rounded-lg p-12">
             <svg
               className="mx-auto h-12 w-12 text-gray-400"
@@ -204,46 +261,46 @@ export default function ExpensesList({ expenses }) {
                         >
                           Description
                         </th>
-                         <th
+                        <th
                           scope="col"
                           className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                         >
                           Category
                         </th>
 
-                          <th
+                        <th
                           scope="col"
                           className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                         >
                           Frequency
                         </th>
-                      
+
                         <th
                           scope="col"
                           className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                         >
                           Due Date
                         </th>
-                      
-                          <th
+
+                        <th
                           scope="col"
                           className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                         >
                           Amount
                         </th>
-                       
+
                         <th scope="col" className="py-3.5 pl-3 pr-4 sm:pr-6">
                           <span className="sr-only">Actions</span>
                         </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                      {expenses.map((expense) => (
+                      {filteredExpenses.map((expense) => (
                         <tr key={expense.id}>
                           <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                             {expense.description}
                           </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {expense.categories ? (
                               <span
                                 className="inline-flex rounded-full px-2 text-xs font-semibold"
@@ -260,21 +317,19 @@ export default function ExpensesList({ expenses }) {
                               </span>
                             )}
                           </td>
-                          
-                         
+
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold text-green-800">
                               {expense.recurrence_type.charAt(0).toUpperCase() +
                                 expense.recurrence_type.slice(1)}
                             </span>
                           </td>
-                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {formatDueDate(expense)}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {formatCurrency(expense.amount)}
                           </td>
-                      
 
                           <td className="whitespace-nowrap py-4 pl-3 pr-4 text-sm font-medium sm:pr-6">
                             <button

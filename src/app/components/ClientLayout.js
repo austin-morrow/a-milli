@@ -20,7 +20,7 @@ export default function ClientLayout({ children, workspaceName }) {
       )}
 
       {/* Floating Spotify Player */}
-      <div className="fixed bottom-4 right-4 w-80 z-50 shadow-lg">
+      {/* <div className="fixed bottom-4 right-4 w-80 z-50 shadow-lg">
         <iframe
           data-testid="embed-iframe"
           style={{ borderRadius: "12px" }}
@@ -32,7 +32,7 @@ export default function ClientLayout({ children, workspaceName }) {
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
           loading="lazy"
         ></iframe>
-      </div>
+      </div> */}
     </>
   );
 }

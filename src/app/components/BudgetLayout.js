@@ -229,7 +229,19 @@ export default function BudgetLayout({
                               );
 
                             // If no current period, find the next upcoming one
-                          const upcomingPeriod = selectedBudget.budget_pay_periods[0];
+                            const nextPeriod = selectedBudget.budget_pay_periods
+                              .filter((period) => {
+                                const start = new Date(period.start_date);
+                                start.setHours(0, 0, 0, 0);
+                                return start > today;
+                              })
+                              .sort(
+                                (a, b) =>
+                                  new Date(a.start_date) -
+                                  new Date(b.start_date),
+                              )[0];
+
+                            const upcomingPeriod = currentPeriod || nextPeriod;
 
                             if (!upcomingPeriod) {
                               return (
@@ -409,7 +421,7 @@ export default function BudgetLayout({
                   <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)]">
                     <div className="px-8 pt-8 sm:px-10 sm:pt-10">
                       <p className="mt-2 text-lg font-medium tracking-tight text-gray-950 max-lg:text-center">
-                        Left to Spend
+                        Variable Expenses
                       </p>
                       <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
                         Lorem ipsum, dolor sit amet consectetur adipisicing elit
