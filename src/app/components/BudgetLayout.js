@@ -247,7 +247,7 @@ export default function BudgetLayout({
                               return (
                                 <div className="text-center py-8">
                                   <p className="text-sm text-gray-500">
-                                    No upcoming pay periods
+                                    No upcoming pay bills
                                   </p>
                                 </div>
                               );
