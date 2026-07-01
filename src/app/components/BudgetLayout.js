@@ -421,7 +421,7 @@ export default function BudgetLayout({
                   <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)]">
                     <div className="px-8 pt-8 sm:px-10 sm:pt-10">
                       <p className="mt-2 text-lg font-medium tracking-tight text-gray-950 max-lg:text-center">
-                        Variable Expenses
+                        Bi-Weekly Expenses
                       </p>
                       <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
                         Lorem ipsum, dolor sit amet consectetur adipisicing elit
@@ -445,7 +445,7 @@ export default function BudgetLayout({
                   <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)]">
                     <div className="px-8 pt-8 sm:px-10 sm:pt-10">
                       <p className="mt-2 text-lg font-medium tracking-tight text-gray-950 max-lg:text-center">
-                        Weekly Expenses
+                       Vaiable Expenses
                       </p>
                       <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
                         Lorem ipsum, dolor sit amet consectetur adipisicing elit
@@ -469,7 +469,7 @@ export default function BudgetLayout({
                   <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)]">
                     <div className="px-8 pt-8 sm:px-10 sm:pt-10">
                       <p className="mt-2 text-lg font-medium tracking-tight text-gray-950 max-lg:text-center">
-                        Current Account Totals
+                        Bi-Weekly Tracker
                       </p>
                       <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
                         Morbi viverra dui mi arcu sed. Tellus semper adipiscing
