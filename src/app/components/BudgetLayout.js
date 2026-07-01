@@ -7,11 +7,13 @@ import {
   ChevronDownIcon,
   CalendarIcon,
   Squares2X2Icon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter, usePathname } from "next/navigation";
 import ConfirmBudgetModal from "@/app/components/ConfirmBudgetModal";
 import BudgetCalendarView from "@/app/components/BudgetCalendarView";
 import AddPayPeriodModal from "@/app/components/AddPayPeriodModal";
+import SettingsModal from "@/app/components/SettingsModal";
 
 export default function BudgetLayout({
   budgets,
@@ -82,15 +84,18 @@ export default function BudgetLayout({
     setMonthOffset((prev) => prev + 6);
   };
 
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+
+  const stats = [
+    { id: 1, name: "Current Account Total", value: "$335.39" },
+    { id: 2, name: "Remaining Bills", value: "$175.53" },
+    { id: 3, name: "Remaining Bi-weeklu Expenses", value: "-" },
+    { id: 4, name: "Remaining Variable Expenses", value: "$91.01" },
+  ];
+
   const displayName =
     selectedBudget?.name ||
     new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
-
-  const stats = [
-    { name: "Total Subscribers", stat: "71,897" },
-    { name: "Avg. Open Rate", stat: "58.16%" },
-    { name: "Avg. Click Rate", stat: "24.57%" },
-  ];
 
   return (
     <>
@@ -114,6 +119,15 @@ export default function BudgetLayout({
 
             {/* View Toggle */}
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsSettingsModalOpen(true)}
+                className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                title="Settings"
+              >
+                <Cog6ToothIcon className="h-5 w-5" />
+              </button>
+
+              <div className="h-6 w-px bg-gray-200" />
               <button
                 onClick={() => router.push("/spending/budget")}
                 className={`p-2 rounded-lg transition-colors ${
@@ -185,6 +199,18 @@ export default function BudgetLayout({
             </div>
           )}
         </div>
+        <dl className="mt-6 grid grid-cols-2 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-4">
+          {stats.map((stat) => (
+            <div key={stat.id} className="flex flex-col bg-gray-400/5 p-4">
+              <dt className="text-xs font-semibold text-gray-600">
+                {stat.name}
+              </dt>
+              <dd className="order-first text-xl font-semibold tracking-tight text-gray-900">
+                {stat.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
 
         {/* Budget Content */}
         {selectedBudget ? (
@@ -195,7 +221,7 @@ export default function BudgetLayout({
             />
           ) : (
             <div className="mx-auto max-w-2xl lg:max-w-7xl">
-              <div className="mt-10 grid gap-4 sm:mt-16 lg:grid-cols-3 lg:grid-rows-2">
+              <div className="mt-6 grid gap-4 sm:mt-8 lg:grid-cols-3 lg:grid-rows-2">
                 {/* Column 1 - Upcoming Bills (tall, row-span-2) */}
                 <div className="relative lg:row-span-2">
                   <div className="absolute inset-px rounded-lg bg-white lg:rounded-l-4xl" />
@@ -428,13 +454,6 @@ export default function BudgetLayout({
                         maiores impedit.
                       </p>
                     </div>
-                    <div className="flex flex-1 items-center justify-center px-8 max-lg:pt-10 max-lg:pb-12 sm:px-10 lg:pb-2">
-                      <img
-                        alt=""
-                        src="https://tailwindcss.com/plus-assets/img/component-images/bento-03-performance.png"
-                        className="w-full max-lg:max-w-xs"
-                      />
-                    </div>
                   </div>
                   <div className="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-black/5 max-lg:rounded-t-4xl" />
                 </div>
@@ -445,67 +464,29 @@ export default function BudgetLayout({
                   <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)]">
                     <div className="px-8 pt-8 sm:px-10 sm:pt-10">
                       <p className="mt-2 text-lg font-medium tracking-tight text-gray-950 max-lg:text-center">
-                       Vaiable Expenses
+                        Variable Expenses
                       </p>
                       <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
                         Lorem ipsum, dolor sit amet consectetur adipisicing elit
                         maiores impedit.
                       </p>
                     </div>
-                    <div className="flex flex-1 items-center justify-center px-8 max-lg:pt-10 max-lg:pb-12 sm:px-10 lg:pb-2">
-                      <img
-                        alt=""
-                        src="https://tailwindcss.com/plus-assets/img/component-images/bento-03-performance.png"
-                        className="w-full max-lg:max-w-xs"
-                      />
-                    </div>
                   </div>
                   <div className="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-black/5 lg:rounded-tr-4xl" />
                 </div>
 
-                {/* Column 2, Row 2 - Current Account Totals */}
-                <div className="relative max-lg:row-start-3 lg:col-start-2 lg:row-start-2">
-                  <div className="absolute inset-px rounded-lg bg-white" />
-                  <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)]">
-                    <div className="px-8 pt-8 sm:px-10 sm:pt-10">
-                      <p className="mt-2 text-lg font-medium tracking-tight text-gray-950 max-lg:text-center">
-                        Bi-Weekly Tracker
-                      </p>
-                      <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
-                        Morbi viverra dui mi arcu sed. Tellus semper adipiscing
-                        suspendisse semper morbi.
-                      </p>
-                    </div>
-                    <div className="@container flex flex-1 items-center max-lg:py-6 lg:pb-2">
-                      <img
-                        alt=""
-                        src="https://tailwindcss.com/plus-assets/img/component-images/bento-03-security.png"
-                        className="h-[min(152px,40cqw)] object-cover"
-                      />
-                    </div>
-                  </div>
-                  <div className="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-black/5" />
-                </div>
-
-                {/* Column 3, Row 2 - Current Account Totals (duplicate) */}
-                <div className="relative lg:col-start-3 lg:row-start-2">
+                {/* Row 2 - Variable Expenses Tracker (full width) */}
+                <div className="relative max-lg:row-start-3 lg:col-start-2 lg:col-span-2 lg:row-start-2">
                   <div className="absolute inset-px rounded-lg bg-white lg:rounded-br-4xl" />
-                  <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] lg:rounded-r-[calc(2rem+1px)]">
-                    <div className="px-8 pt-8 sm:px-10 sm:pt-10">
+                  <div className="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] lg:rounded-br-[calc(2rem+1px)]">
+                    <div className="px-8 pt-8 pb-6 sm:px-10 sm:pt-10">
                       <p className="mt-2 text-lg font-medium tracking-tight text-gray-950 max-lg:text-center">
-                        Variable Expenses
+                        Variable Expenses Tracker
                       </p>
                       <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
                         Morbi viverra dui mi arcu sed. Tellus semper adipiscing
                         suspendisse semper morbi.
                       </p>
-                    </div>
-                    <div className="@container flex flex-1 items-center max-lg:py-6 lg:pb-2">
-                      <img
-                        alt=""
-                        src="https://tailwindcss.com/plus-assets/img/component-images/bento-03-security.png"
-                        className="h-[min(152px,40cqw)] object-cover"
-                      />
                     </div>
                   </div>
                   <div className="pointer-events-none absolute inset-px rounded-lg shadow-sm outline outline-black/5 lg:rounded-br-4xl" />
@@ -553,6 +534,12 @@ export default function BudgetLayout({
       <AddPayPeriodModal
         isOpen={isAddPayPeriodModalOpen}
         onClose={() => setIsAddPayPeriodModalOpen(false)}
+        budgetId={selectedBudget?.id}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
         budgetId={selectedBudget?.id}
       />
     </>
