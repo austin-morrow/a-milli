@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 
 const tabs = [
-  { name: "Overview", href: "/spending/overview" },
+  // { name: "Overview", href: "/spending/overview" },
   { name: "Budget", href: "/spending/budget" },
   { name: "Income", href: "/spending/income" },
   { name: "Expenses", href: "/spending/expenses" },

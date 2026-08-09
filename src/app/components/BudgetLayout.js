@@ -89,7 +89,7 @@ export default function BudgetLayout({
   const stats = [
     { id: 1, name: "Current Account Total", value: "$335.39" },
     { id: 2, name: "Remaining Bills", value: "$175.53" },
-    { id: 3, name: "Remaining Bi-weeklu Expenses", value: "-" },
+    { id: 3, name: "Remaining Bi-weekly Expenses", value: "-" },
     { id: 4, name: "Remaining Variable Expenses", value: "$91.01" },
   ];
 
@@ -450,8 +450,7 @@ export default function BudgetLayout({
                         Bi-Weekly Expenses
                       </p>
                       <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit
-                        maiores impedit.
+                       Groceries, Seltos Gas, etc...
                       </p>
                     </div>
                   </div>
@@ -467,8 +466,7 @@ export default function BudgetLayout({
                         Variable Expenses
                       </p>
                       <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit
-                        maiores impedit.
+                        Cat food, spectra Fas, Fun, Date Money, misc...
                       </p>
                     </div>
                   </div>
@@ -484,8 +482,7 @@ export default function BudgetLayout({
                         Variable Expenses Tracker
                       </p>
                       <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
-                        Morbi viverra dui mi arcu sed. Tellus semper adipiscing
-                        suspendisse semper morbi.
+                     Sub-category, expernse and total
                       </p>
                     </div>
                   </div>

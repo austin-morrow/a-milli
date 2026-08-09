@@ -1,5 +1,7 @@
 "use client";
 
+//To-do Add Bi-weekly expenses
+
 import { useState, useEffect, useRef } from "react";
 import AddExpenseModal from "@/app/components/AddExpenseModal";
 import EditExpenseModal from "@/app/components/EditExpenseModal";

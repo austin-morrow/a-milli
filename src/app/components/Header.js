@@ -17,7 +17,7 @@ import {
   Bars3Icon,
   XMarkIcon,
   TrophyIcon,
-  ChartBarIcon,
+  ArrowTrendingDownIcon,
   Cog8ToothIcon,
   BanknotesIcon,
 } from "@heroicons/react/24/outline";
@@ -30,7 +30,7 @@ const navigation = [
     icon: BanknotesIcon,
   },
   { name: "Accounts", href: "/accounts", icon: BuildingLibraryIcon },
-  { name: "Insights", href: "/insights", icon: ChartBarIcon },
+  { name: "Debt Tracker", href: "/debt", icon: ArrowTrendingDownIcon },
   { name: "Goals", href: "/goals", icon: TrophyIcon },
 ];
 
