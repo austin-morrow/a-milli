@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "@/app/actions/auth";
 
 import { useState } from "react";
 import {
@@ -21,7 +22,7 @@ import {
   ArrowTrendingDownIcon,
   Cog6ToothIcon,
   BanknotesIcon,
-  HomeIcon,
+  Squares2X2Icon,
 } from "@heroicons/react/24/outline";
 import {
   BuildingLibraryIcon,
@@ -29,7 +30,7 @@ import {
 } from "@heroicons/react/20/solid";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
+  { name: "Dashboard", href: "/dashboard", icon: Squares2X2Icon },
   { name: "Spending", href: "/spending", icon: BanknotesIcon },
   { name: "Accounts", href: "/accounts", icon: BuildingLibraryIcon },
   { name: "Debt Tracker", href: "/debt", icon: ArrowTrendingDownIcon },
@@ -38,17 +39,14 @@ const navigation = [
 const budgets = [
   { id: 1, name: "Morrow Manor", href: "#", initial: "MM", current: false },
 ];
-const userNavigation = [
-  { name: "Your profile", href: "/profile" },
-  { name: "Sign out", href: "#" },
-];
+const userNavigation = [{ name: "Your profile", href: "/profile" }];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Header({ children, displayName }) {
-    const pathname = usePathname();
+export default function Header({ children, displayName, avatarUrl }) {
+  const pathname = usePathname();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -113,15 +111,13 @@ export default function Header({ children, displayName }) {
                               <item.icon
                                 aria-hidden="true"
                                 className={classNames(
-                                 pathname.startsWith(item.href)
+                                  pathname.startsWith(item.href)
                                     ? "text-milli-green"
                                     : "text-gray-400 group-hover:text-milli-green",
                                   "size-6 shrink-0",
                                 )}
                               />
                               {item.name}
-                              
-
                             </Link>
                           </li>
                         ))}
@@ -132,12 +128,12 @@ export default function Header({ children, displayName }) {
                         Your budgets
                       </div>
                       <ul role="list" className="-mx-2 mt-2 space-y-1">
-                        {budgets.map((team) => (
-                          <li key={team.name}>
+                        {budgets.map((budget) => (
+                          <li key={budget.name}>
                             <a
-                              href={team.href}
+                              href={budget.href}
                               className={classNames(
-                                team.current
+                                budget.current
                                   ? "bg-gray-50 text-milli-green"
                                   : "text-gray-700 hover:bg-gray-50 hover:text-milli-green",
                                 "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
@@ -145,15 +141,16 @@ export default function Header({ children, displayName }) {
                             >
                               <span
                                 className={classNames(
-                                  team.current
+                                  budget.current
                                     ? "border-milli-green text-milli-green"
                                     : "border-gray-200 text-gray-400 group-hover:border-milli-green group-hover:text-milli-green",
                                   "flex size-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium",
                                 )}
                               >
-                                {team.initial}
+                                {budget.initial}
                               </span>
-                              <span className="truncate">{team.name}</span>
+                              <span className="truncate">{budget.name}</span>
+                              <span>(Current)</span>
                             </a>
                           </li>
                         ))}
@@ -220,12 +217,12 @@ export default function Header({ children, displayName }) {
                     Your budgets
                   </div>
                   <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {budgets.map((team) => (
-                      <li key={team.name}>
+                    {budgets.map((budget) => (
+                      <li key={budget.name}>
                         <a
-                          href={team.href}
+                          href={budget.href}
                           className={classNames(
-                            team.current
+                            budget.current
                               ? "bg-gray-50 text-milli-green"
                               : "text-gray-700 hover:bg-gray-50 hover:text-milli-green",
                             "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
@@ -233,15 +230,15 @@ export default function Header({ children, displayName }) {
                         >
                           <span
                             className={classNames(
-                              team.current
+                              budget.current
                                 ? "border-milli-green text-milli-green"
                                 : "border-gray-200 text-gray-400 group-hover:border-milli-green group-hover:text-milli-green",
                               "flex size-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium",
                             )}
                           >
-                            {team.initial}
+                            {budget.initial}
                           </span>
-                          <span className="truncate">{team.name}</span>
+                          <span className="truncate">{budget.name}</span>
                         </a>
                       </li>
                     ))}
@@ -294,11 +291,20 @@ export default function Header({ children, displayName }) {
                   <MenuButton className="relative flex items-center">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
-                    <img
-                      alt=""
-                      src="/about-img.png"
-                      className="size-8 rounded-full bg-gray-50 outline -outline-offset-1 outline-black/5"
-                    />
+                    {avatarUrl ? (
+                      <img
+                        alt=""
+                        src={avatarUrl}
+                        className="size-8 rounded-full bg-gray-50 object-cover outline -outline-offset-1 outline-black/5"
+                      />
+                    ) : (
+                      <span
+                        aria-hidden="true"
+                        className="flex size-8 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-500 outline -outline-offset-1 outline-black/5"
+                      >
+                        {displayName?.[0]?.toUpperCase()}
+                      </span>
+                    )}
                     <span className="hidden lg:flex lg:items-center">
                       <span
                         aria-hidden="true"
@@ -316,16 +322,25 @@ export default function Header({ children, displayName }) {
                     transition
                     className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg outline-1 outline-gray-900/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                   >
-                    {userNavigation.map((item) => (
-                      <MenuItem key={item.name}>
-                        <Link
-                          href={item.href}
-                          className="block px-3 py-1 text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden"
+                    <MenuItem>
+                      <Link
+                        href="/profile"
+                        className="block px-3 py-1 text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden"
+                      >
+                        Your profile
+                      </Link>
+                    </MenuItem>
+
+                    <form action={signOut}>
+                      <MenuItem>
+                        <button
+                          type="submit"
+                          className="block w-full px-3 py-1 text-left text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden"
                         >
-                          {item.name}
-                        </Link>
+                          Sign out
+                        </button>
                       </MenuItem>
-                    ))}
+                    </form>
                   </MenuItems>
                 </Menu>
               </div>
@@ -333,14 +348,14 @@ export default function Header({ children, displayName }) {
           </div>
 
           <div className="lg:pl-72">
-          <div className="sticky top-0 z-40 flex h-16 ...">
-            {/* top bar */}
+            <div className="sticky top-0 z-40 flex h-4 ...">
+              {/* top bar */}
+            </div>
           </div>
+          <main>
+            <div className="px-4 sm:px-6 lg:px-8">{children}</div>
+          </main>
         </div>
-        <main className="py-10">
-          <div className="px-4 sm:px-6 lg:px-8">{children}</div>
-        </main>
-      </div>
       </div>
     </>
   );

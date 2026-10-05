@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { signOut } from "@/app/actions/auth";
 
 function getGreeting(timeZone) {
   let hour
@@ -42,10 +41,6 @@ return (
       {getGreeting(profile?.timezone)}
       {profile?.first_name ? `, ${profile.first_name}` : ""}
     </h1>
-
-    <form action={signOut}>
-      <button>Sign out</button>
-    </form>
   </main>
 );
 }

@@ -22,7 +22,7 @@ export default function ProfileNav() {
             <li key={item.name}>
               <Link
                 href={item.href}
-                className={pathname === item.href ? "text-indigo-600" : ""}
+                className={pathname === item.href ? "text-milli-green" : ""}
               >
                 {item.name}
               </Link>

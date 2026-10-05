@@ -4,7 +4,7 @@ import { useState } from "react";
 import { changePassword } from "@/app/actions/profile";
 
 const inputClass =
-  "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6";
+  "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-milli-green sm:text-sm/6";
 const labelClass = "block text-sm/6 font-medium text-gray-900";
 
 export default function PasswordForm() {
@@ -106,7 +106,7 @@ export default function PasswordForm() {
         <button
           type="submit"
           disabled={saving}
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-60"
+          className="rounded-md bg-milli-green px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-milli-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-milli-green disabled:opacity-60"
         >
           {saving ? "Updating..." : "Update password"}
         </button>

@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { updateProfile, updateAvatar } from "@/app/actions/profile";
 
 const inputClass =
-  "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6";
+  "block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-milli-green disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6";
 const labelClass = "block text-sm/6 font-medium text-gray-900";
 
 const ALLOWED_TYPES = {
@@ -195,7 +195,7 @@ export default function ProfileForm({ userId, email, profile, timezones }) {
               id="timezone"
               name="timezone"
               defaultValue={profile.timezone}
-              className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-milli-green sm:text-sm/6"
             >
               {timezones.map((tz) => (
                 <option key={tz.value} value={tz.value}>
@@ -229,7 +229,7 @@ export default function ProfileForm({ userId, email, profile, timezones }) {
         <button
           type="submit"
           disabled={saving}
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-60"
+          className="rounded-md bg-milli-green px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-milli-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-milli-green disabled:opacity-60"
         >
           {saving ? "Saving..." : "Save"}
         </button>
