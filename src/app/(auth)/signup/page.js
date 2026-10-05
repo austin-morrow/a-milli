@@ -20,6 +20,7 @@ export default function SignUp() {
     setMessage(null);
 
     const formData = new FormData(e.currentTarget);
+    formData.set("timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
 
     if (formData.get("password") !== formData.get("confirmPassword")) {
       setError("Passwords do not match");

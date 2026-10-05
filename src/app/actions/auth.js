@@ -34,9 +34,9 @@ export async function signUp(formData) {
     options: {
       data: {
         // The handle_new_user trigger copies display_name into profiles
-        display_name: `${firstName} ${lastName}`.trim(),
         first_name: firstName,
         last_name: lastName,
+          timezone: formData.get("timezone") || "UTC",
       },
       emailRedirectTo: `${origin}/auth/callback`,
     },
